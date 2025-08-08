@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simulación de Algoritmo Genético Explicada</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans p-6">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
+
+    <!-- LADO IZQUIERDO: CONCEPTOS -->
+    <div class="space-y-6">
+      <h1 class="text-3xl font-bold text-yellow-400">¿Qué es un Algoritmo Genético?</h1>
+      <div class="text-gray-300 text-base leading-relaxed space-y-4">
+        <p>Es un método de búsqueda inspirado en la evolución natural. Sirve para encontrar la mejor solución a un problema complejo.</p>
+        <ul class="list-disc list-inside space-y-2">
+          <li><b>Genotipo:</b> cadena de bits (ceros y unos) que codifica una solución.</li>
+          <li><b>Aptitud:</b> qué tan buena es la solución. Aquí lo medimos con <b>coherencia de tópicos</b>.</li>
+          <li><b>Selección:</b> se eligen los individuos más aptos para reproducirse.</li>
+          <li><b>Cruce:</b> se combinan dos soluciones para crear nuevas.</li>
+          <li><b>Mutación:</b> se cambia aleatoriamente un bit para explorar nuevas combinaciones.</li>
+          <li><b>Elitismo:</b> se conserva el mejor individuo para la siguiente generación.</li>
+        </ul>
+
+        <div class="mt-6 space-x-3">
+          <button id="startBtn" class="bg-green-600 px-4 py-2 rounded shadow hover:bg-green-500">
+            ▶️ Iniciar simulación
+          </button>
+          <button onclick="location.reload()" class="bg-indigo-600 px-4 py-2 rounded shadow hover:bg-indigo-500">
+            🔄 Reiniciar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LADO DERECHO: SIMULACIÓN -->
+    <div class="space-y-6">
+      <h2 class="text-2xl font-semibold text-center text-lime-300">Simulación de optimización (LDA)</h2>
+
+      <div id="explanation" class="text-lg text-center bg-gray-800 p-3 rounded shadow font-semibold hidden">
+        Cargando simulación...
+      </div>
+
+      <div id="bestDisplay" class="text-center text-green-300 text-sm font-semibold"></div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <h3 class="text-sm font-semibold mb-1 text-yellow-300">👥 Generación Actual</h3>
+          <div id="popInit" class="grid grid-cols-3 gap-1 bg-red-800 p-2 rounded"></div>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold mb-1 text-green-300">🌱 Nueva Generación</h3>
+          <div id="popNew" class="grid grid-cols-3 gap-1 bg-green-800 p-2 rounded"></div>
+        </div>
+      </div>
+
+      <div class="overflow-auto">
+        <h3 class="text-sm font-semibold mb-1">📋 Tabla de Individuos y Aptitud</h3>
+        <table class="table-auto w-full text-xs text-white border border-gray-700">
+          <thead class="bg-gray-700">
+            <tr>
+              <th class="p-1 border">#</th>
+              <th class="p-1 border">Genotipo</th>
+              <th class="p-1 border">Aptitud</th>
+              <th class="p-1 border">α, β, topics</th>
+            </tr>
+          </thead>
+          <tbody id="genotypeTable" class="text-center"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const N = 10;
+    const L = 12;
+    const GENS = 3;
+    let generation = 1;
+    let population = [];
+    let bestIndividual = null;
+    let history = [];
+
+    function randomGenotype() {
+      return Array.from({ length: L }, () => Math.random() < 0.5 ? '0' : '1');
+    }
+
+    function decode(genotype) {
+      const binToFloat = (bin, min, max) => {
+        const decimal = parseInt(bin.join(''), 2) / 15;
+        return (min + decimal * (max - min)).toFixed(2);
+      };
+      const alpha = binToFloat(genotype.slice(0, 4), 0.01, 1);
+      const beta = binToFloat(genotype.slice(4, 8), 0.01, 1);
+      const topics = Math.round(binToFloat(genotype.slice(8, 12), 2, 50));
+      return { alpha, beta, topics };
+    }
+
+    function fitness(genotype) {
+      const { alpha, beta, topics } = decode(genotype);
+      const score = 1 - Math.abs(0.3 - alpha) - Math.abs(0.3 - beta) - Math.abs(20 - topics) / 50;
+      return +(score.toFixed(2));
+    }
+
+    function getColor(score) {
+      if (score > 0.8) return 'bg-green-300';
+      if (score > 0.6) return 'bg-yellow-300';
+      return 'bg-red-300';
+    }
+
+    function renderPopulation(containerId, data) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      data.forEach((genotype) => {
+        const score = fitness(genotype);
+        const color = getColor(score);
+        const div = document.createElement("div");
+        div.className = `font-mono text-xs px-2 py-1 rounded ${color} text-black text-center shadow`;
+        div.textContent = genotype.join('');
+        container.appendChild(div);
+      });
+    }
+
+    function updateTable(data) {
+      const tbody = document.getElementById("genotypeTable");
+      tbody.innerHTML = "";
+      data.forEach((genotype, i) => {
+        const apt = fitness(genotype);
+        const decoded = decode(genotype);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="border px-2">${i + 1}</td>
+          <td class="border px-2 font-mono text-green-300">${genotype.join('')}</td>
+          <td class="border px-2">
+            <div class="h-2 bg-gray-600 rounded overflow-hidden">
+              <div style="width: ${apt * 100}%" class="h-full bg-lime-400"></div>
+            </div>
+            <div class="text-xs">${apt}</div>
+          </td>
+          <td class="border px-2 text-gray-300">α: ${decoded.alpha}, β: ${decoded.beta}, topics: ${decoded.topics}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function showExplanation(text) {
+      const e = document.getElementById('explanation');
+      e.classList.remove('hidden');
+      e.innerHTML = text;
+    }
+
+    function showBest(individual) {
+      const params = decode(individual);
+      const score = fitness(individual);
+      history.push(score);
+      document.getElementById('bestDisplay').innerHTML = `
+        🏆 Mejor individuo: <span class="bg-black px-2 py-1 rounded text-lime-300">${individual.join('')}</span><br>
+        Coherencia: <b>${score}</b> | α=${params.alpha}, β=${params.beta}, topics=${params.topics}<br>
+        <span class="text-xs text-gray-400">Historial: ${history.join(', ')}</span>
+      `;
+    }
+
+    async function wait(ms = 1800) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function runOneGeneration() {
+      showExplanation(`📘 Generación ${generation}: creando población...`);
+      if (generation === 1) population = Array.from({ length: N }, randomGenotype);
+      renderPopulation('popInit', population);
+      updateTable(population);
+      await wait();
+
+      showExplanation("✅ Selección de los mejores individuos.");
+      const selected = population.sort((a, b) => fitness(b) - fitness(a)).slice(0, N / 2);
+      await wait();
+
+      showExplanation("🔀 Cruzamiento de pares para nueva descendencia.");
+      const offspring = [];
+      for (let i = 0; i < selected.length - 1; i += 2) {
+        const p1 = selected[i];
+        const p2 = selected[i + 1];
+        const point = Math.floor(L / 2);
+        offspring.push([...p1.slice(0, point), ...p2.slice(point)]);
+        offspring.push([...p2.slice(0, point), ...p1.slice(point)]);
+      }
+      renderPopulation('popNew', offspring);
+      await wait();
+
+      showExplanation("⚡ Aplicando mutación aleatoria.");
+      const mutated = offspring.map(g => {
+        const copy = [...g];
+        if (Math.random() < 0.5) {
+          const pos = Math.floor(Math.random() * L);
+          copy[pos] = copy[pos] === '1' ? '0' : '1';
+        }
+        return copy;
+      });
+      renderPopulation('popNew', mutated);
+      await wait();
+
+      const all = [...population, ...mutated];
+      const best = all.reduce((a, b) => fitness(a) > fitness(b) ? a : b);
+      if (!bestIndividual || fitness(best) > fitness(bestIndividual)) {
+        bestIndividual = [...best];
+        showBest(bestIndividual);
+      }
+
+      population = [...selected, ...mutated];
+      updateTable(population);
+      generation++;
+    }
+
+    async function runSimulation() {
+      for (let i = 0; i < GENS; i++) await runOneGeneration();
+      showExplanation("🎯 Optimización completada. Observa la mejor combinación encontrada.");
+    }
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      document.getElementById('startBtn').disabled = true;
+      runSimulation();
+    });
+  </script>
+</body>
+</html>

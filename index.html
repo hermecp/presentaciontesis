@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Defensa de Tesis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=CMU+Serif:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'CMU Serif', serif;
+    margin: 0;
+    overflow: hidden;
+    background-color: white;
+  }
+  .slide {
+    min-width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+    background-color: white;
+    break-inside: avoid;
+    position: relative;
+  }
+  .slide-header {
+    background-color: #E6ECF5; /* Azul bajito, elegante */
+    color: #181818;  /* Negro */
+    text-align: center;
+    font-size: 2.3rem;
+    font-weight: 900;
+    padding: 1.2rem 1.5rem 1rem 1.5rem;
+    letter-spacing: 0.025em;
+    line-height: 1.15;
+    box-shadow: 0 2px 10px 0 rgba(30, 58, 138, 0.04);
+  }
+  .slide-content {
+    flex: 1;
+    font-size: 2.1rem;
+    line-height: 2.8rem;
+    padding: 2.7rem 7vw 2rem 7vw;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #181818; /* Letras negras */
+  }
+  .slide-footer {
+    background-color: #E6ECF5; /* Azul bajito */
+    color: #181818; /* Negro */
+    font-size: 1.18rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0.7rem 2.3rem;
+    font-family: 'CMU Serif', serif;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    box-shadow: 0 -2px 10px 0 rgba(30, 58, 138, 0.04);
+  }
+  .slides-container {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+  }
+  @media (max-width: 900px) {
+    .slide-header { font-size: 1.2rem; padding: 0.7rem 0.7rem 0.4rem 0.7rem; }
+    .slide-content { font-size: 0.98rem; padding: 1.2rem 2vw; }
+    .slide-footer { font-size: 0.87rem; padding: 0.4rem 1rem; }
+  }
+  @media print {
+    body { overflow: visible !important; }
+    #controls, #fullscreenBtn { display: none !important; }
+    .slides-container { display: block !important; transform: none !important; }
+    .slide {
+      page-break-after: always;
+      width: 100%;
+      height: auto !important;
+      min-height: 100vh;
+      break-inside: avoid;
+    }
+    .slide-content { overflow: visible !important; }
+  }
+</style>
+
+<script src="genetico-simulacion.js"></script>
+
+
+</head>
+<body class="text-gray-800">
+
+  <button id="fullscreenBtn"
+          onclick="toggleFullscreen()" 
+          class="fixed top-3 right-3 z-50 bg-white border border-gray-300 shadow px-3 py-1 rounded text-sm hover:bg-gray-100">
+    Pantalla completa
+  </button>
+
+  <div id="slides" class="slides-container">
+  <!-- Slide 1: Portada -->
+<section class="slide text-center relative">
+  <div class="slide-content pb-4 flex flex-col justify-start items-center">
+    <div class="w-full flex flex-row justify-between items-center mb-12 px-16" style="min-height:110px;">
+      <img src="conacyt2.png" alt="CONAHCyT" class="h-28 object-contain" style="max-width: 350px;">
+      <div style="flex:1"></div>
+      <img src="logo_centrogeo.png" alt="CentroGeo" class="h-28 object-contain" style="max-width: 350px;">
+    </div>
+    <p class="text-3xl font-semibold uppercase mb-2 mt-6">
+      Centro de Investigación en Ciencias de Información Geoespacial, A.C.
+    </p>
+    <p class="mb-5 text-2xl">
+      CentroGeo · Centro Público de Investigación del SECIHTI
+    </p>
+    <h1 class="text-5xl font-extrabold max-w-6xl mx-auto leading-tight mb-10 mt-2">
+      Generación automatizada de tópicos en la plataforma de acceso a la información pública gubernamental (2003–2020)
+    </h1>
+    <p class="text-4xl font-semibold mb-8">
+      Doctorado en Ciencias de Información Geoespacial
+    </p>
+    <div class="text-3xl font-extrabold mb-10">
+      Hermelando Cruz Pérez
+    </div>
+    <div class="grid grid-cols-2 gap-16 text-left text-2xl max-w-4xl mx-auto mb-8">
+      <div>
+        <p class="font-bold mb-1">Director de tesis</p>
+        <p>Dr. Alejandro Molina Villegas</p>
+      </div>
+      <div>
+        <p class="font-bold mb-1">Sinodales</p>
+        <p>Dr. César Rentería Marín</p>
+        <p>Dr. Edwyn Aldana Bobadilla</p>
+        <p>Dra. Silvia Fidelina Fernández Sabido</p>
+      </div>  
+    </div>
+  </div>
+  <p class="text-gray-600 text-2xl absolute bottom-6 left-0 right-0 text-center">
+    Mérida, agosto de 2024
+  </p>
+</section>
+
+   <!--######################################################################## -->
+<section class="slide">
+  <div class="slide-header">Introducción</div>
+
+  <div class="slide-content flex flex-col items-center justify-center h-full pt-2">
+    
+    <!-- Infografía de puntos clave -->
+    <div class="flex flex-col md:flex-row gap-12 w-full max-w-7xl justify-center items-start mb-10 mt-4">
+      <!-- Bullet 1 -->
+      <div class="flex flex-col items-center text-center w-full md:w-1/4 px-4">
+        <svg class="w-20 h-20 mb-2 text-purple-700" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M13 16h-1v-4h-1m1-4h.01"></path>
+        </svg>
+        <div class="text-2xl font-extrabold mb-1">Transparencia</div>
+        <div class="text-xl font-medium">Acceso a la información pública fortalece la transparencia y la rendición de cuentas.</div>
+      </div>
+      <!-- Bullet 2 -->
+      <div class="flex flex-col items-center text-center w-full md:w-1/4 px-4">
+        <svg class="w-20 h-20 mb-2 text-green-700" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+          <path d="M17 20h5v-2a3 3 0 0 0-5.356-1.857M9 20H4v-2a3 3 0 0 1 5.356-1.857M15 11a4 4 0 1 0-6 0M12 15v1m0 4v.01"></path>
+        </svg>
+        <div class="text-2xl font-extrabold mb-1">+2.5 millones</div>
+        <div class="text-xl font-medium">de solicitudes en SISI, Infomex y PNT entre 2003 y 2020.</div>
+      </div>
+      <!-- Bullet 3 -->
+      <div class="flex flex-col items-center text-center w-full md:w-1/4 px-4">
+        <svg class="w-20 h-20 mb-2 text-purple-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+          <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+          <path d="M8 12h8M12 8v8"></path>
+        </svg>
+        <div class="text-2xl font-extrabold mb-1">Desigualdad regional</div>
+        <div class="text-xl font-medium">Diferencias marcadas en la demanda y el ejercicio del derecho.</div>
+      </div>
+      <!-- Bullet 4 -->
+      <div class="flex flex-col items-center text-center w-full md:w-1/4 px-4">
+        <svg class="w-20 h-20 mb-2 text-teal-700" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M8 12l2 2l4-4"></path>
+        </svg>
+        <div class="text-2xl font-extrabold mb-1">Análisis avanzado</div>
+        <div class="text-xl font-medium">Procesamiento de lenguaje natural y algoritmos genéticos.</div>
+      </div>
+    </div>
+
+    <!-- Gráficos ampliados -->
+    <div class="flex flex-col md:flex-row gap-12 w-full max-w-7xl justify-center items-start">
+      <!-- Gráfico de barras -->
+      <div class="flex flex-col items-center w-full md:w-1/2">
+        <h3 class="text-2xl font-bold mb-3">Solicitudes (2003–2020): 2,573,963</h3>
+        <img src="cantidad_solicitudes_2003_2020.png"
+             alt="Gráfico de solicitudes por año"
+             class="object-contain h-[400px] w-full max-w-2xl shadow-2xl rounded-2xl border-2 border-gray-300" />
+      </div>
+
+      <!-- Mapa geográfico -->
+      <div class="flex flex-col items-center w-full md:w-1/2">
+        <h3 class="text-2xl font-bold mb-3">Distribución geográfica de solicitudes</h3>
+        <img src="mapas_animados.gif"
+             alt="Mapa de solicitudes por entidad federativa"
+             class="object-contain h-[400px] w-full max-w-2xl shadow-2xl rounded-2xl border-2 border-gray-300" />
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer"><span>2 / 22</span></div>
+</section>
+
+
+
+   <!--######################################################################## -->
+<section class="slide">
+  <div class="slide-header">Planteamiento del Problema</div>
+  <div class="slide-content flex flex-col items-center justify-center h-full pt-4">
+
+    <!-- Sección de bullets -->
+    <div class="flex flex-col justify-center items-center w-full h-full">
+      <div class="flex flex-col md:flex-row gap-20 w-full max-w-7xl justify-center items-stretch mb-10 mt-8">
+        <!-- Bullet 1 -->
+        <div class="flex flex-col items-center text-center w-full md:w-1/3 px-6">
+          <svg class="w-20 h-20 mb-4 text-red-600" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 12h8M12 8v8"></path>
+          </svg>
+          <div class="text-2xl font-bold mb-2">¿Qué preocupa a la ciudadanía?</div>
+          <div class="text-xl leading-snug font-medium">
+            Identificar los <span class="font-bold">temas predominantes</span> en solicitudes de acceso a la información pública.
+          </div>
+        </div>
+        <!-- Bullet 2 -->
+        <div class="flex flex-col items-center text-center w-full md:w-1/3 px-6">
+          <svg class="w-20 h-20 mb-4 text-amber-700" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+            <path d="M12 8c-2.2 0-4 1.8-4 4m4-4c2.2 0 4 1.8 4 4m-4-4V4m0 8v8"></path>
+            <circle cx="12" cy="12" r="10"></circle>
+          </svg>
+          <div class="text-2xl font-bold mb-2">Evolución y diferencias</div>
+          <div class="text-xl leading-snug font-medium">
+            Analizar cómo cambian estas preocupaciones <span class="font-bold">en el tiempo y entre regiones</span>.
+          </div>
+        </div>
+        <!-- Bullet 3 -->
+        <div class="flex flex-col items-center text-center w-full md:w-1/3 px-6">
+          <svg class="w-20 h-20 mb-4 text-indigo-700" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+            <path d="M8 16h8M8 12h8M8 8h8"></path>
+          </svg>
+          <div class="text-2xl font-bold mb-2">Impacto esperado</div>
+          <div class="text-xl leading-snug font-medium">
+            Mejorar la <span class="font-bold">categorización</span> de temas y fortalecer <span class="font-bold">políticas de transparencia</span> y <span class="font-bold">equidad</span> regional.
+          </div>
+        </div>
+      </div>
+
+      <!-- Línea divisoria -->
+      <hr class="w-full max-w-6xl border-t-2 border-gray-200 my-6" />
+
+      <!-- Hipótesis mejor segmentada -->
+      <div class="w-full max-w-5xl mt-4">
+        <div class="bg-blue-50 border-l-8 border-blue-600 p-10 rounded-2xl shadow-xl text-2xl text-gray-900 flex items-start gap-5">
+          <svg class="w-10 h-10 text-blue-700 mt-1 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M13 16h-1v-4h-1m1-4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"></path>
+          </svg>
+          <div class="space-y-3">
+            <div class="text-blue-900 font-bold">Hipótesis:</div>
+            <div>
+              A través del <span class="font-bold">análisis automatizado de texto</span> de las solicitudes de acceso a la información pública (2003–2020), será posible identificar:
+              <ul class="list-disc pl-6 mt-2 text-blue-900 text-xl font-medium space-y-1">
+                <li><span class="font-semibold">temas de interés general</span>,</li>
+                <li><span class="font-semibold">variaciones geográficas y temporales</span>.</li>
+              </ul>
+              <p class="mt-4">
+                Esto apoyará el diseño de estrategias de transparencia <span class="font-bold">focalizadas</span>, <span class="font-bold">equitativas</span> y alineadas a las <span class="font-bold">necesidades regionales</span>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>3 / 22</span></div>
+</section>
+
+
+     <!--######################################################################## -->
+<section class="slide">
+  <div class="slide-header">Objetivos y Justificación</div>
+
+  <div class="slide-content w-full flex flex-col space-y-10 px-8">
+
+    <!-- Parte superior: Objetivo general y específicos -->
+    <div class="flex flex-col lg:flex-row gap-8 w-full">
+
+      <!-- Objetivo general -->
+      <div class="flex-1 bg-white border-l-4 border-purple-600 p-8 rounded-xl shadow-md">
+        <h3 class="text-3xl font-extrabold text-purple-700 mb-4">Objetivo general</h3>
+        <p class="text-lg  text-gray-800 leading-relaxed">
+          <strong>Desarrollar una metodología</strong> para la <strong>identificación y categorización de temas</strong> presentes en las solicitudes de acceso a la información pública de la Plataforma Nacional de Transparencia (PNT) durante el periodo <strong>2003–2020</strong>, con el fin de <strong>mejorar la accesibilidad, el análisis y el aprovechamiento</strong> de la información pública conforme a las <strong>necesidades regionales y temáticas</strong> de la ciudadanía.
+        </p>
+      </div>
+
+      <!-- Objetivos específicos -->
+      <div class="flex-1 bg-white border-l-4 border-blue-600 p-8 rounded-xl shadow-md">
+        <h3 class="text-3xl font-extrabold text-blue-700 mb-4">Objetivos específicos</h3>
+        <ul class="list-disc pl-6 space-y-4 text-lg  text-gray-800 leading-relaxed">
+          <li><strong>Evaluar diferentes enfoques</strong> para la identificación automática de tópicos, considerando <strong>métricas de coherencia</strong>, <strong>vocabulario optimizado</strong> y <strong>modelos de lenguaje</strong>.</li>
+          <li><strong>Identificar y clasificar</strong> solicitudes relacionadas con <strong>temas ambientales</strong> en el marco del <strong>Acuerdo de Escazú</strong>, para proponer indicadores temáticos.</li>
+          <li><strong>Diseñar una herramienta interactiva</strong> que integre <strong>análisis temático</strong>, <strong>visualización estadística</strong> y <strong>representación geoespacial</strong>.</li>
+          <li><strong>Comparar el desempeño</strong> de la metodología frente a esquemas tradicionales, evaluando su <strong>efectividad</strong> y <strong>aplicabilidad</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Parte inferior: Justificación -->
+    <div class="bg-blue-50 border-l-4 border-blue-600 p-8 rounded-xl shadow-md w-full">
+      <h3 class="text-3xl font-extrabold text-blue-900 mb-4">Justificación</h3>
+      <p class="text-lg  text-gray-800 leading-relaxed">
+        Esta investigación propone una <strong>metodología automatizada</strong> basada en técnicas de <strong>procesamiento de lenguaje natural</strong> y <strong>algoritmos genéticos</strong> para analizar las solicitudes de la PNT (<strong>2003–2020</strong>). Busca <strong>facilitar el acceso</strong>, <strong>mejorar el análisis</strong> y obtener una <strong>visión detallada</strong> de las demandas ciudadanas a nivel regional.
+      </p>
+      <p class="mt-6 text-lg   text-gray-800 leading-relaxed">
+        Al <strong>identificar temas predominantes</strong> por entidad federativa, se contribuirá al diseño de <strong>políticas de datos abiertos</strong> más efectivas y alineadas con las <strong>necesidades específicas</strong> de cada región. Asimismo, se fortalecerá la <strong>rendición de cuentas</strong> y se promoverá una <strong>mayor equidad</strong> en el acceso a la información pública.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="slide-footer"><span>4 / 22</span></div>
+</section>
+
+
+     <!--######################################################################## -->
+<section class="slide h-screen flex flex-col bg-gradient-to-b from-white/80 to-purple-50/95 backdrop-blur-md">
+
+  <!-- Header fijo arriba -->
+  <header class="px-12 pt-8 pb-4 text-4xl font-bold slide-header">
+    Marco Teórico 1/3
+  </header>
+
+<br>
+  <!-- Contenido principal con scroll si se desborda -->
+  <main class="flex-1 overflow-y-auto px-12 space-y-10 pb-8">
+
+    <!-- Línea del tiempo -->
+    <div class="flex items-start justify-between gap-6 overflow-x-auto">
+      <div class="flex flex-col items-center text-center w-36">
+        <div class="w-12 h-12 rounded-full bg-purple-200 flex items-center justify-center text-lg font-bold">1766</div>
+        <p class="mt-2 text-base font-medium">Suecia<br><span class="text-sm">Libertad de prensa</span></p>
+      </div>
+      <div class="flex flex-col items-center text-center w-36">
+        <div class="w-12 h-12 rounded-full bg-purple-300 flex items-center justify-center text-lg font-bold">1789</div>
+        <p class="mt-2 text-base font-medium">Francia<br><span class="text-sm">Derechos del Hombre</span></p>
+      </div>
+      <div class="flex flex-col items-center text-center w-36">
+        <div class="w-12 h-12 rounded-full bg-purple-400 flex items-center justify-center text-lg font-bold">1948</div>
+        <p class="mt-2 text-base font-medium">ONU<br><span class="text-sm">Declaración Universal</span></p>
+      </div>
+      <div class="flex flex-col items-center text-center w-36">
+        <div class="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-lg font-bold">1966</div>
+        <p class="mt-2 text-base font-medium">ONU<br><span class="text-sm">Pacto Derechos Civiles</span></p>
+      </div>
+      <div class="flex flex-col items-center text-center w-36">
+        <div class="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-lg font-bold">2020</div>
+        <p class="mt-2 text-base font-medium">OEA<br><span class="text-sm">Ley Modelo Interamericana</span></p>
+      </div>
+    </div>
+
+    <!-- Cuatro bloques temáticos -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-lg">
+      <div class="bg-purple-100 p-6 rounded-xl shadow-md">
+        <h3 class="text-2xl font-bold text-purple-900 mb-2">Marco normativo en México</h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Art. 6° CPEUM</li>
+          <li>Ley General de Transparencia (2015)</li>
+          <li>Ley Federal de Transparencia</li>
+          <li>INAI como órgano garante</li>
+        </ul>
+      </div>
+      <div class="bg-green-100 p-6 rounded-xl shadow-md">
+        <h3 class="text-2xl font-bold text-green-900 mb-2">Acuerdo de Escazú</h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Ratificado por México en 2021</li>
+          <li>Acceso a la información ambiental</li>
+          <li>Protección a defensores del medio ambiente</li>
+          <li>Participación pública y justicia ambiental</li>
+        </ul>
+      </div>
+      <div class="bg-red-100 p-6 rounded-xl shadow-md">
+        <h3 class="text-2xl font-bold text-red-900 mb-2">Retos actuales</h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Falta de conocimiento ciudadano</li>
+          <li>Baja usabilidad de la PNT</li>
+          <li>Desigualdad entre órganos garantes</li>
+          <li>Brecha digital y capacitación insuficiente</li>
+        </ul>
+      </div>
+      <div class="bg-yellow-100 p-6 rounded-xl shadow-md">
+        <h3 class="text-2xl font-bold text-yellow-900 mb-2">PNT y datos abiertos</h3>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Solicitudes y obligaciones de transparencia</li>
+          <li>Publicación automatizada de información</li>
+          <li>Datos en formatos abiertos (CSV, JSON, XML)</li>
+          <li>Base para investigación y ciudadanía</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Cita final -->
+    <p class="text-center text-xl italic text-purple-800 font-medium">
+      El derecho a la información es clave para la transparencia, la justicia ambiental y la gobernanza democrática.
+    </p>
+  </main>
+
+  <!-- Footer fijo abajo -->
+  <footer class="px-12 py-4 text-right text-base text-black-600 font-medium slide-footer">
+    <span class="font-bold">5 / 22</span>
+  </footer>
+</section>
+
+       <!--######################################################################## -->
+<section class="slide h-screen flex flex-col bg-gradient-to-b from-white/80 to-purple-50/95 backdrop-blur-md">
+
+  <!-- TÍTULO -->
+  <header class="slide-header px-12 pt-8 pb-4 text-4xl md:text-4xl font-extrabold text-gray-800">
+    Marco Teórico 2/3: Modelado de Tópicos y LDA
+  </header>
+
+  <!-- CONTENIDO -->
+  <main class="flex-1 overflow-y-auto px-12 pb-8 text-base leading-relaxed text-gray-900 space-y-10">
+
+    <!-- INTRODUCCIÓN -->
+    <p class="text-base text-gray-700">
+      LDA (Latent Dirichlet Allocation) es un modelo probabilístico que permite identificar temas latentes en un conjunto de documentos. Asume que cada documento es una mezcla de tópicos y que cada tópico es una mezcla de palabras.
+    </p>
+
+    <!-- FÓRMULA + EJEMPLO -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+
+      <!-- IZQUIERDA: FÓRMULA -->
+      <div class="bg-white border-l-4 border-purple-600 p-6 rounded-xl shadow-md w-full">
+        <h3 class="text-base font-bold text-purple-800 mb-3">Distribución de palabras en LDA</h3>
+        <div class="font-mono text-4xl text-purple-900 mb-4 text-center">
+          \( P(w_i) = \sum_{j=1}^{K} P(w_i \mid z_j) \cdot P(z_j) \)
+        </div>
+        <p class="text-sm mb-3">Donde:</p>
+        <ul class="list-disc list-inside space-y-1 text-sm">
+          <li><strong>\( P(w_i) \):</strong> Probabilidad de la palabra \( w_i \) en un documento.</li>
+          <li><strong>\( P(w_i \mid z_j) \):</strong> Probabilidad de que \( w_i \) aparezca en el tópico \( z_j \).</li>
+          <li><strong>\( P(z_j) \):</strong> Probabilidad del tópico \( z_j \) en ese documento.</li>
+        </ul>
+        <p class="mt-3 text-sm text-gray-700 italic">
+          Esta fórmula representa cómo LDA estima la probabilidad de cada palabra considerando su relación con todos los tópicos posibles del modelo.
+        </p>
+      </div>
+
+      <!-- DERECHA: EJEMPLO SIMPLIFICADO -->
+      <div class="bg-indigo-50 border-l-4 border-indigo-600 p-6 rounded-xl shadow-md w-full">
+        <h3 class="text-base font-bold text-indigo-800 mb-3">Ejemplo paso a paso</h3>
+
+        <p class="text-base mb-3">
+          Supongamos que el modelo LDA analiza un documento y encuentra la palabra <span class="text-teal-700 font-bold">agua</span>. LDA estima su probabilidad combinando dos temas principales:
+        </p>
+
+        <ul class="list-disc list-inside text-sm mb-3">
+          <li><strong class="text-purple-700">Tópico 1:</strong> Medio ambiente</li>
+          <li><strong class="text-green-700">Tópico 2:</strong> Comunidad</li>
+        </ul>
+
+        <p class="text-base mb-2">El modelo nos da estas estimaciones:</p>
+
+        <ul class="list-disc list-inside text-sm mb-5">
+          <li><strong>P(agua | Tópico 1) = 0.6</strong> → "Agua" es común en el tema Medio ambiente.</li>
+          <li><strong>P(Tópico 1) = 0.7</strong> → El documento habla mayormente sobre Medio ambiente.</li>
+          <li><strong>P(agua | Tópico 2) = 0.2</strong> → "Agua" también aparece en el tema Comunidad, pero menos.</li>
+          <li><strong>P(Tópico 2) = 0.3</strong> → El documento también trata sobre Comunidad, pero en menor medida.</li>
+        </ul>
+
+        <p class="text-base mb-2">
+          Para estimar qué tan probable es encontrar la palabra <span class="text-teal-700 font-bold">"agua"</span> en este documento, LDA aplica esta fórmula:
+        </p>
+
+        <div class="font-mono text-2xl text-purple-900 my-5 text-center">
+          \( P(\text{"agua"}) = (0.6 \cdot 0.7) + (0.2 \cdot 0.3) = 0.42 + 0.06 = \mathbf{0.48} \)
+        </div>
+
+        <p class="text-base">
+          Es decir, según el modelo, hay un <strong class="text-green-700">48%</strong> de probabilidad de encontrar la palabra “agua” en el documento. Esto se calcula combinando la relevancia de la palabra en cada tema con cuánto se habla de ese tema en el texto.
+        </p>
+      </div>
+    </div>
+
+    <!-- PARÁMETROS Y EVALUACIÓN -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 text-sm">
+
+      <div class="bg-pink-50 border-l-4 border-pink-500 p-4 rounded-xl shadow-sm">
+        <h3 class="text-base font-bold text-pink-800 mb-1">Parámetros</h3>
+        <p><strong>k</strong>, <strong>α</strong> y <strong>β</strong> controlan la cantidad de tópicos y su distribución en documentos y palabras.</p>
+      </div>
+
+      <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-xl shadow-sm">
+        <h3 class="text-base font-bold text-yellow-800 mb-1">Evaluación</h3>
+        <p>Se usan métricas como la <strong>coherencia</strong> (una de las más comunes), junto con la diversidad y separación temática.</p>
+      </div>
+
+    </div>
+
+    <div class="pt-5"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="px-12 py-4 text-right text-sm text-black-600 font-medium slide-footer">
+    <span class="font-bold">6 / 22</span>
+  </footer>
+</section>
+<!-- MathJax -->
+<script>
+  window.MathJax = { tex: {inlineMath: [['\\(','\\)'], ['\\[','\\]']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+   <!--######################################################################## -->
+ <!--######################################################################## -->
+<section class="slide bg-white min-h-screen flex flex-col justify-between">
+
+  <!-- ENCABEZADO -->
+  <div class="slide-header text-4xl font-bold text-center text-gray-900 py-4 border-b border-gray-300">
+    Marco Teórico 3/3 · Algoritmo Genético
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="flex flex-col md:flex-row justify-between px-8 py-6 gap-8 grow">
+
+    <!-- IZQUIERDA: CONCEPTOS -->
+    <div class="w-full md:w-1/2 space-y-6 text-[18px] leading-relaxed text-gray-900">
+      <h2 class="text-3xl font-bold text-black">¿Qué es un Algoritmo Genético?</h2>
+      <p class="text-[18px] text-gray-800 leading-relaxed">
+        Es un método de búsqueda inspirado en la evolución biológica, que se utiliza para encontrar soluciones óptimas a problemas complejos. Se basa en el principio de "selección natural", donde las mejores soluciones sobreviven y se combinan para crear nuevas generaciones cada vez mejores.
+      </p>
+      <ul id="conceptList" class="list-disc list-inside space-y-2 text-[18px] text-black mt-4 transition-colors duration-300">
+        <li id="concept-genotipo"><b>Genotipo:</b> cadena de bits que representa una posible solución.</li>
+        <li id="concept-aptitud"><b>Aptitud:</b> mide qué tan buena es esa solución según una función objetivo.</li>
+        <li id="concept-seleccion"><b>Selección:</b> los mejores individuos se eligen para reproducirse.</li>
+        <li id="concept-cruce"><b>Cruce:</b> combinación de información genética entre padres para generar descendencia.</li>
+        <li id="concept-mutacion"><b>Mutación:</b> cambio aleatorio en un bit para mantener diversidad genética.</li>
+        <li id="concept-elitismo"><b>Elitismo:</b> se conserva el mejor individuo para la siguiente generación.</li>
+      </ul>
+
+      <!-- BOTONES -->
+      <div class="flex gap-4 pt-2">
+        <button id="startBtn" class="bg-black hover:bg-gray-800 text-white px-5 py-2.5 rounded shadow text-base font-semibold">
+          ▶️ Iniciar simulación
+        </button>
+        <button id="resetBtn" class="bg-gray-700 hover:bg-gray-800 text-white px-5 py-2.5 rounded shadow text-base font-semibold">
+          🔄 Reiniciar
+        </button>
+      </div>
+    </div>
+
+    <!-- DERECHA: SIMULACIÓN -->
+    <div class="w-full md:w-1/2 space-y-6">
+      <!-- EXPLICACIÓN DE FASE -->
+      <div id="explanation" class="text-[18px] text-center font-semibold rounded shadow p-3 transition-colors duration-500 ease-in-out bg-gray-100 text-gray-800">
+       
+      </div>
+
+      <!-- POBLACIONES -->
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <h3 class="text-center text-base font-bold text-black">Generación Actual</h3>
+          <div id="popInit" class="grid grid-cols-3 gap-2 bg-white p-3 rounded shadow-inner border border-gray-300 transition-colors duration-500 ease-in-out"></div>
+        </div>
+        <div>
+          <h3 class="text-center text-base font-bold text-black">Nueva Generación</h3>
+          <div id="popNew" class="grid grid-cols-3 gap-2 bg-white p-3 rounded shadow-inner border border-gray-300 transition-colors duration-500 ease-in-out"></div>
+        </div>
+      </div>
+
+      <!-- MEJOR RESULTADO -->
+      <div id="bestDisplay" class="text-base text-center text-black font-semibold leading-relaxed animate-pulse"></div>
+
+      <!-- TABLA DE DETALLE -->
+      <div class="overflow-auto">
+        <table class="w-full text-[16px] border border-gray-400 shadow-sm">
+          <thead class="bg-gray-100 text-black">
+            <tr>
+              <th class="border p-2">#</th>
+              <th class="border p-2">Genotipo</th>
+              <th class="border p-2">Aptitud</th>
+              <th class="border p-2">Parámetros</th>
+            </tr>
+          </thead>
+          <tbody id="genotypeTable" class="text-center text-black"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="slide-footer text-base text-right text-black-500 px-6 py-3 border-t border-gray-300">
+    <span class="font-bold">7 / 22</span>
+  </div>
+</section>
+
+
+
+
+   <!--######################################################################## -->
+<section class="slide">
+  <div class="slide-header">Estado del Arte</div>
+
+  <div class="slide-content mb-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <!-- Columna Izquierda: Acceso a la Información Pública -->
+      <div class="bg-gradient-to-b from-blue-50 to-white border-l-8 border-blue-600 p-6 rounded-2xl shadow-md">
+        <div class="flex items-center mb-4">
+          <div class="text-3xl mr-3">📂</div>
+          <h3 class="text-2xl font-bold text-blue-800">Acceso a la Información Pública</h3>
+        </div>
+        <ul class="text-gray-700 text-[1.05rem] leading-relaxed space-y-3">
+          <li><strong>Coria & López (2024):</strong> Minería de datos en la PNT, centrada en portales obligatorios.</li>
+          <li><strong>Bagozzi et al. (2016, 2019):</strong> sLDA aplicado a la respuesta gubernamental (2003–2015).</li>
+          <li><strong>Berliner et al. (2018):</strong> LDA no supervisado para identificar temas de interés ciudadano.</li>
+          <li><strong>Berliner et al. (2020):</strong> Análisis del sesgo político en las respuestas del gobierno.</li>
+        </ul>
+      </div>
+
+      <!-- Columna Derecha: Optimización del Modelo LDA -->
+      <div class="bg-gradient-to-b from-green-50 to-white border-l-8 border-green-600 p-6 rounded-2xl shadow-md">
+        <div class="flex items-center mb-4">
+          <div class="text-3xl mr-3">⚙️</div>
+          <h3 class="text-2xl font-bold text-green-800">Optimización del Modelo LDA</h3>
+        </div>
+        <ul class="text-gray-700 text-[1.05rem] leading-relaxed space-y-3">
+          <li><strong>Yarnguy & Kanarkard (2018):</strong> ACO para ajuste de hiperparámetros α y β.</li>
+          <li><strong>Pathik & Shukla (2020):</strong> Recocido simulado para mejorar coherencia temática.</li>
+          <li><strong>Hasan et al. (2021):</strong> NAC/NAP para evitar sobreajuste en el número de temas.</li>
+          <li><strong>Zhao et al. (2015):</strong> Heurística RPC para ajuste eficiente del modelo.</li>
+          <li><strong>Sbalchiero & Eder (2020):</strong> Relación entre longitud del texto y complejidad temática.</li>
+          <li><strong>Dang & Nguyen (2018):</strong> ComModeler basado en redes semánticas dinámicas.</li>
+        </ul>
+      </div>
+    </div>
+
+  
+  </div>
+
+  <div class="slide-footer"><span>8 / 22</span></div>
+</section>
+
+
+   <!--######################################################################## -->
+
+
+   <!--######################################################################## -->
+<!-- SLIDE 1: Metodología General (compacta, tipografía grande, sin espacios muertos) -->
+<section class="slide">
+  <!-- Título -->
+  <div class="slide-header text-4xl font-extrabold text-center text-gray-900 py-6 border-b">
+    Metodología General
+  </div>
+
+  <!-- Contenido -->
+  <div class="slide-content px-6 pt-6 h-[80vh] flex items-start">
+    <div class="w-full max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6">
+
+      <!-- Plantilla de elemento -->
+      <div class="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-lg hover:shadow-xl transition">
+        <div class="text-5xl mb-3">📥</div>
+        <h3 class="text-2xl font-bold">1. Recopilación</h3>
+        <p class="text-lg text-gray-700 mt-2 leading-snug">Extracción de solicitudes del INAI (2003–2020).</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-lg hover:shadow-xl transition">
+        <div class="text-5xl mb-3">🧹</div>
+        <h3 class="text-2xl font-bold">2. Preprocesamiento</h3>
+        <p class="text-lg text-gray-700 mt-2 leading-snug">Normalización, limpieza, tokenización y lematización.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-lg hover:shadow-xl transition">
+        <div class="text-5xl mb-3">🧾</div>
+        <h3 class="text-2xl font-bold">3. Vocabulario</h3>
+        <p class="text-lg text-gray-700 mt-2 leading-snug">Filtro por frecuencia (ley de Zipf) para reducir ruido.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-lg hover:shadow-xl transition">
+        <div class="text-5xl mb-3">📈</div>
+        <h3 class="text-2xl font-bold">4. LDA</h3>
+        <p class="text-lg text-gray-700 mt-2 leading-snug">Modelado de tópicos con Latent Dirichlet Allocation.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-lg hover:shadow-xl transition">
+        <div class="text-5xl mb-3">🧬</div>
+        <h3 class="text-2xl font-bold">5. Optimización</h3>
+        <p class="text-lg text-gray-700 mt-2 leading-snug">Búsqueda de α, β y K con algoritmos genéticos.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-lg hover:shadow-xl transition">
+        <div class="text-5xl mb-3">🔧</div>
+        <h3 class="text-2xl font-bold">6. Ensamblaje</h3>
+        <p class="text-lg text-gray-700 mt-2 leading-snug">Selección del mejor modelo por coherencia y diversidad.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-lg hover:shadow-xl transition">
+        <div class="text-5xl mb-3">🗺️</div>
+        <h3 class="text-2xl font-bold">7. Tópicos por Estado</h3>
+        <p class="text-lg text-gray-700 mt-2 leading-snug">Agrupación y asignación geográfica por entidad.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-lg hover:shadow-xl transition">
+        <div class="text-5xl mb-3">🧠</div>
+        <h3 class="text-2xl font-bold">8. Interpretación</h3>
+        <p class="text-lg text-gray-700 mt-2 leading-snug">Etiquetado automático con modelos GPT.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-lg hover:shadow-xl transition">
+        <div class="text-5xl mb-3">🔗</div>
+        <h3 class="text-2xl font-bold">9. Similitud</h3>
+        <p class="text-lg text-gray-700 mt-2 leading-snug">Embeddings y cálculo de similitud semántica.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-lg hover:shadow-xl transition">
+        <div class="text-5xl mb-3">📊</div>
+        <h3 class="text-2xl font-bold">10. Visualización</h3>
+        <p class="text-lg text-gray-700 mt-2 leading-snug">Dashboard interactivo con mapas y gráficas.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="slide-footer"><span>9 / 22</span></div>
+</section>
+
+
+
+
+<section class="slide h-screen flex flex-col">
+<div class="slide-header text-4xl font-bold p-3 text-center border-b">Metodología: LDA Entrenamiento Manual</div>
+
+
+  <div class="flex-1 overflow-y-auto p-3">
+    <div class="w-full max-w-none px-2 md:px-6 mx-auto text-lg text-gray-800">
+
+      <div class="bg-gray-50 border-l-4 border-black p-4 mb-4 shadow-sm">
+        <p class="italic mb-2">Ejemplos reales de solicitudes:</p>
+        <ul class="list-disc pl-6 space-y-1 leading-relaxed">
+          <li>“Solicito copia íntegra del contrato adjudicado a la empresa Consultores Ambientales S.A. de C.V...”</li>
+          <li>“Requiero el desglose completo del monto total ejercido en campañas de comunicación institucional...”</li>
+          <li>“Favor de remitir en formato editable el padrón de beneficiarios del programa Apoyo Alimentario...”</li>
+          <li>“¿Cuántas denuncias formales por acoso laboral se han registrado ante la unidad de control interno...”</li>
+          <li>“Solicito la base de datos completa en formato abierto (CSV o Excel) de todas las sanciones administrativas...”</li>
+        </ul>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
+        <div>
+          <label class="block font-semibold">α (Alpha)</label>
+          <input id="alpha" type="range" min="0.1" max="1.0" step="0.01" value="0.3" class="w-full accent-black">
+          <div id="alphaVal" class="text-center mt-1 font-mono">0.30</div>
+        </div>
+        <div>
+          <label class="block font-semibold">β (Beta)</label>
+          <input id="beta" type="range" min="0.01" max="0.5" step="0.01" value="0.1" class="w-full accent-black">
+          <div id="betaVal" class="text-center mt-1 font-mono">0.10</div>
+        </div>
+        <div>
+          <label class="block font-semibold">k (Tópicos)</label>
+          <input id="topics" type="range" min="2" max="10" step="1" value="4" class="w-full accent-black">
+          <div id="topicsVal" class="text-center mt-1 font-mono">4</div>
+        </div>
+        <div>
+          <label class="block font-semibold">📈 Progreso</label>
+          <div id="steps" class="flex gap-1 justify-center mt-2 flex-wrap text-sm text-gray-700"></div>
+        </div>
+      </div>
+
+      <div class="text-center mb-4">
+        <button onclick="runSimulation()" class="bg-black text-white font-bold px-6 py-2 rounded shadow hover:scale-105 transition duration-150">🔄 Simular Modelo</button>
+      </div>
+
+      <div id="finalResult" class="hidden border-t pt-4 mt-4">
+        <h3 id="coherenceTitle" class="text-xl font-semibold text-red-700 mb-3 text-center">⚠️ Resultado del Modelo: Coherencia Baja</h3>
+        <div class="bg-gray-50 border rounded p-3 mb-3 shadow-sm text-center">
+          <span>α: <code id="alphaRes"></code></span> |
+          <span>β: <code id="betaRes"></code></span> |
+          <span>k: <code id="kRes"></code></span> |
+          <span>Coherencia: <code id="coherenceRes" class="text-red-600 font-semibold"></code></span> |
+          <span>Tiempo: <code id="timeRes" class="text-gray-700"></code></span>
+        </div>
+
+        <div class="bg-red-50 border rounded p-3 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h4 class="text-lg font-semibold mb-1 text-red-800">🔍 Tópicos Detectados</h4>
+            <div id="topicList" class="space-y-1"></div>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold mb-1">🧠 Interpretación</h4>
+            <p id="interpretationText" class="leading-relaxed">El modelo intentó agrupar las solicitudes en temas comunes, pero la baja coherencia indica que los tópicos no están bien definidos.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="slide-footer text-center py-2 border-t text-base"><span>10 / 22</span></div>
+</section>
+
+<script src="simulacion_lda.js"></script>
+
+
+
+
+<section class="slide h-screen flex flex-col justify-between bg-white px-8 pt-0 pb-6">
+  <!-- HEADER PEGADO ARRIBA -->
+  <div class="slide-header text-4xl font-bold text-center py-1 border-b">
+    Metodología: Optimización con Algoritmo Genético
+  </div>
+
+<br>
+  <!-- CONTENIDO INTERMEDIO -->
+  <div class="flex-1 overflow-y-auto">
+    <!-- Controles de simulación -->
+    <div class="flex flex-col md:flex-row justify-center gap-4 mb-6 items-center">
+      <label class="text-base font-medium">Generaciones: 
+        <input id="genSlider" type="range" min="5" max="50" value="30" class="ml-2 align-middle">
+        <span id="genValue" class="ml-2 text-blue-700 font-semibold">30</span>
+      </label>
+      <button id="runBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow">
+        Ejecutar Simulación
+      </button>
+    </div>
+
+    <!-- Visualización de pasos -->
+    <div id="output" class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm max-w-6xl mx-auto mb-6"></div>
+
+    <!-- GRÁFICA Y RESULTADO FINAL -->
+    <div class="max-w-6xl mx-auto mb-8">
+      <div class="flex flex-col md:flex-row gap-4 items-start">
+        <!-- Gráfico generado por Plotly -->
+        <div class="flex-1" id="chart"></div>
+
+        <!-- Resultado final de la simulación (se muestra al terminar) -->
+        <div id="finalResultGenetico" class="hidden bg-green-100 border-l-4 border-green-600 p-4 w-full md:w-[400px] shadow rounded text-center transition-all duration-300 ease-in-out">
+          <!-- JS insertará el contenido aquí -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER PEGADO ABAJO -->
+  <div class="slide-footer text-right text-sm text-black-600 border-t pt-2">
+    <span>11 / 22</span>
+  </div>
+</section>
+
+
+  <!-- Librerías -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script src="genetic-simulation.js"></script>
+</section>
+
+
+    <!--######################################################################## -->
+ 
+
+
+<section class="slide">
+  <!-- Encabezado -->
+  <div class="slide-header text-4xl font-bold text-center text-gray-900 py-6 border-b border-gray-200">
+    Metodología: Interpretación de tópico
+  </div>
+
+  <!-- Contenido -->
+  <div class="slide-content flex justify-center items-center px-8 py-10 h-[80vh]">
+    <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+
+      <!-- IZQUIERDA: Nube / Imagen del tópico -->
+      <figure class="w-full h-[420px] md:h-[520px] bg-gray-50 rounded-2xl shadow-inner border border-gray-200 p-3 flex items-center justify-center">
+        <!-- Reemplaza el src por tu imagen -->
+        <img src="ejemplo_nube_p.png" alt="Nube de palabras del tópico: pesca sostenible y regulación"
+             class="h-full w-full object-contain rounded-lg">
+      </figure>
+
+      <!-- DERECHA: Interpretación del tópico -->
+      <div class="w-full space-y-4">
+        <!-- Título propuesto -->
+        <div class="bg-white border border-gray-200 rounded-2xl shadow p-4">
+          <h3 class="text-2xl font-bold text-gray-900">Título sugerido</h3>
+          <p class="text-lg text-gray-800 mt-1">Pesca sostenible y regulación en Campeche y Veracruz</p>
+          <p class="text-xs text-gray-500 mt-2">Criterio: palabras más probables + entidades/lugares recurrentes.</p>
+        </div>
+
+        <!-- Palabras clave con probabilidad -->
+        <div class="bg-white border border-gray-200 rounded-2xl shadow p-4">
+          <h4 class="font-semibold text-gray-900">Palabras clave y probabilidad</h4>
+          <div class="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <div class="flex justify-between"><span class="font-medium">pesca</span><span>0.2600</span></div>
+            <div class="flex justify-between"><span class="font-medium">guía</span><span>0.0330</span></div>
+            <div class="flex justify-between"><span class="font-medium">oficina</span><span>0.0250</span></div>
+            <div class="flex justify-between"><span class="font-medium">pesquera</span><span>0.0140</span></div>
+            <div class="flex justify-between"><span class="font-medium">virus sar</span><span>0.0130</span></div>
+            <div class="flex justify-between"><span class="font-medium">octubre</span><span>0.0110</span></div>
+            <div class="flex justify-between"><span class="font-medium">septiembre</span><span>0.0090</span></div>
+            <div class="flex justify-between"><span class="font-medium">campeche</span><span>0.0070</span></div>
+            <div class="flex justify-between"><span class="font-medium">especie</span><span>0.0060</span></div>
+            <div class="flex justify-between"><span class="font-medium">dictamen</span><span>0.0060</span></div>
+            <div class="flex justify-between"><span class="font-medium">rechazo</span><span>0.0060</span></div>
+            <div class="flex justify-between"><span class="font-medium">veda temporal</span><span>0.0050</span></div>
+            <div class="flex justify-between"><span class="font-medium">mexicano</span><span>0.0050</span></div>
+            <div class="flex justify-between"><span class="font-medium">pacífico</span><span>0.0040</span></div>
+            <div class="flex justify-between"><span class="font-medium">sustentable</span><span>0.0040</span></div>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Fuente: distribución de palabras del tópico (LDA).</p>
+        </div>
+
+        <!-- Descripción interpretable -->
+        <div class="bg-blue-50 border border-blue-200 rounded-2xl shadow p-4">
+          <h4 class="font-semibold text-blue-900">Descripción (interpretación)</h4>
+          <p class="text-[15px] leading-relaxed text-gray-900 mt-1">
+            Tópico centrado en <strong>regulación y control pesquero</strong> con énfasis territorial en
+            <strong>Campeche</strong> y <strong>Veracruz</strong>. Aparecen referencias a
+            <em>vedas temporales</em>, <em>dictámenes</em>, <em>certificación</em> y
+            <em>especies</em>, junto con menciones administrativas (<em>oficina</em>, <em>guía</em>).
+            El contexto temporal (<em>septiembre</em>, <em>octubre</em>) sugiere ventanas de
+            cumplimiento/inspección. El término <em>virus sar</em> aparece como ruido contextual en algunos documentos.
+          </p>
+        </div>
+
+        <!-- Etiquetado / validación -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+            Categoría: Participación y Regulación Ambiental
+          </span>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 border border-purple-200">
+            Coherencia \(C_V\): 0.84
+          </span>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-200">
+            Revisión humana: ✓
+          </span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie -->
+  <div class="slide-footer text-right px-8 py-4 text-sm text-black-500 font-semibold">
+   12 / 22
+  </div>
+</section>
+
+
+
+
+
+
+<section class="slide">
+  <div class="slide-header">
+  Resultados  Hiperparámetros por Entidad Federativa (2020)
+  </div>
+
+  <div class="slide-content" style="flex-direction: column; padding: 1rem 2vw 1rem 2vw;">
+    <div style="text-align: center; font-size: 1.3rem; margin-bottom: 1rem;">
+      Optimización de parámetros LDA — <em>α</em>, <em>β</em>, número de tópicos (<em>K</em>) y coherencia (Coh.)
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 0.4rem; width: 100%; font-size: 0.82rem;">
+      <!-- Tabla 1 -->
+      <table style="border-collapse: collapse; width: 33.33%; table-layout: fixed; font-family: 'Segoe UI', sans-serif;">
+        <thead>
+          <tr style="background: #e8ecf1;">
+            <th>Entidad</th><th>Solic.</th><th>α</th><th>β</th><th><em>K</em></th><th>Coh.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Ags.</td><td>533</td><td>0.28</td><td>0.49</td><td>5</td><td>0.62</td></tr>
+          <tr><td>B.C.</td><td>2,540</td><td>0.68</td><td>0.22</td><td>9</td><td><b>0.84</b></td></tr>
+          <tr><td>B.C.S.</td><td>483</td><td>0.39</td><td>0.43</td><td>4</td><td>0.70</td></tr>
+          <tr><td>Camp.</td><td>205</td><td>0.90</td><td>0.39</td><td>4</td><td>0.74</td></tr>
+          <tr><td>Chis.</td><td>370</td><td>0.71</td><td>0.66</td><td>5</td><td>0.61</td></tr>
+          <tr><td>Chih.</td><td>1,354</td><td>0.85</td><td>0.87</td><td>4</td><td>0.52</td></tr>
+          <tr><td>CDMX</td><td>324,948</td><td>0.26</td><td>0.79</td><td>56</td><td><b>0.82</b></td></tr>
+          <tr><td>Coah.</td><td>651</td><td>0.56</td><td>0.45</td><td>10</td><td>0.54</td></tr>
+          <tr><td>Col.</td><td>234</td><td>0.67</td><td>0.47</td><td>6</td><td>0.59</td></tr>
+          <tr><td>Dgo.</td><td>346</td><td>0.85</td><td>0.60</td><td>3</td><td>0.60</td></tr>
+        </tbody>
+      </table>
+
+      <!-- Tabla 2 -->
+      <table style="border-collapse: collapse; width: 33.33%; table-layout: fixed; font-family: 'Segoe UI', sans-serif;">
+        <thead>
+          <tr style="background: #e8ecf1;">
+            <th>Entidad</th><th>Solic.</th><th>α</th><th>β</th><th><em>K</em></th><th>Coh.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Mex.</td><td>9,740</td><td>0.28</td><td>0.75</td><td>9</td><td>0.66</td></tr>
+          <tr><td>Gto.</td><td>916</td><td>0.90</td><td>0.17</td><td>9</td><td>0.50</td></tr>
+          <tr><td>Gro.</td><td>351</td><td>0.86</td><td>0.54</td><td>7</td><td>0.65</td></tr>
+          <tr><td>Hgo.</td><td>859</td><td>0.77</td><td>0.46</td><td>4</td><td>0.51</td></tr>
+          <tr><td>Jal.</td><td>4,109</td><td>0.92</td><td>0.60</td><td>5</td><td>0.46</td></tr>
+          <tr><td>Mich.</td><td>386</td><td>0.20</td><td>0.19</td><td>3</td><td>0.64</td></tr>
+          <tr><td>Mor.</td><td>904</td><td>0.99</td><td>0.14</td><td>5</td><td>0.52</td></tr>
+          <tr><td>Nay.</td><td>633</td><td>0.30</td><td>0.61</td><td>3</td><td>0.51</td></tr>
+          <tr><td>N.L.</td><td>1,111</td><td>0.91</td><td>0.95</td><td>7</td><td>0.45</td></tr>
+          <tr><td>Oax.</td><td>554</td><td>0.84</td><td>0.35</td><td>6</td><td>0.49</td></tr>
+        </tbody>
+      </table>
+
+      <!-- Tabla 3 -->
+      <table style="border-collapse: collapse; width: 33.33%; table-layout: fixed; font-family: 'Segoe UI', sans-serif;">
+        <thead>
+          <tr style="background: #e8ecf1;">
+            <th>Entidad</th><th>Solic.</th><th>α</th><th>β</th><th><em>K</em></th><th>Coh.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Pue.</td><td>2,580</td><td>0.18</td><td>0.81</td><td>8</td><td><b>0.73</b></td></tr>
+          <tr><td>Qro.</td><td>1,503</td><td>0.76</td><td>0.84</td><td>9</td><td>0.54</td></tr>
+          <tr><td>Q. Roo</td><td>847</td><td>0.18</td><td>0.76</td><td>4</td><td>0.60</td></tr>
+          <tr><td>S.L.P.</td><td>410</td><td>0.53</td><td>0.93</td><td>3</td><td>0.64</td></tr>
+          <tr><td>Sin.</td><td>1,590</td><td>0.51</td><td>0.60</td><td>7</td><td>0.55</td></tr>
+          <tr><td>Son.</td><td>1,139</td><td>0.91</td><td>0.27</td><td>6</td><td>0.63</td></tr>
+          <tr><td>Tab.</td><td>2,150</td><td>0.23</td><td>0.48</td><td>3</td><td>0.55</td></tr>
+          <tr><td>Tamps.</td><td>1,003</td><td>0.72</td><td>0.84</td><td>7</td><td>0.58</td></tr>
+          <tr><td>Tlax.</td><td>480</td><td>0.05</td><td>0.81</td><td>4</td><td>0.68</td></tr>
+          <tr><td>Ver.</td><td>1,767</td><td>0.85</td><td>0.10</td><td>7</td><td>0.48</td></tr>
+          <tr><td>Yuc.</td><td>1,339</td><td>0.72</td><td>0.94</td><td>8</td><td>0.58</td></tr>
+          <tr><td>Zac.</td><td>182</td><td>0.29</td><td>0.07</td><td>5</td><td>0.51</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="slide-footer"><span>13 / 22</span></div>
+</section>
+
+
+
+
+   <section class="slide">
+  <div class="slide-header">
+    Resultados  del Modelado de Tópicos Global (2003–2020)
+  </div>
+
+  <div class="slide-content" style="flex-direction: column; padding: 1.5rem 4vw; align-items: center;">
+    
+    <!-- Contenedor de figuras lado a lado -->
+    <div style="display: flex; justify-content: space-between; gap: 2rem; max-width: 95%; flex-wrap: wrap;">
+
+      <!-- Figura 5.12 -->
+      <div style="flex: 1 1 45%; text-align: center;">
+        <img src="grafico_linea_Cantidad_topicos_por_año.png" alt="Figura 5.12 - Número de tópicos por año" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;" />
+        <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #555;">Figura 5.12. Número de tópicos identificados por año</div>
+      </div>
+
+      <!-- Figura 5.13 -->
+      <div style="flex: 1 1 45%; text-align: center;">
+        <img src="tendencia_categorias_2003-2020.png" alt="Figura 5.13 - Tendencias temáticas" style="width: 100%; max-width: 100%; border: 1px solid #ccc; border-radius: 6px;" />
+        <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #555;">Figura 5.13. Tendencia temática de solicitudes</div>
+      </div>
+
+    </div>
+
+
+  </div>
+
+  <div class="slide-footer"><span>14 / 24</span></div>
+</section>
+
+<section class="slide">
+  <div class="slide-header">
+   Resultados  Zonas Económicas Noroeste y Noreste (2003–2020)
+  </div>
+
+  <div class="slide-content" style="padding: 1rem 3vw; font-size: 0.95rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+
+    <!-- Bloque: Imágenes lado a lado -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; width: 100%;">
+
+      <!-- Imagen Noroeste -->
+      <div style="flex: 1 1 42%; text-align: center; min-width: 280px;">
+        <img src="tendencia_categoria_zona_noroeste.png" alt="Noroeste" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="margin-top: 0.3rem; color: #555;">Figura 5.14. Tendencias en Zona Noroeste</div>
+      </div>
+
+      <!-- Imagen Noreste -->
+      <div style="flex: 1 1 42%; text-align: center; min-width: 280px;">
+        <img src="tendencia_categoria_zona_noreste.png" alt="Noreste" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="margin-top: 0.3rem; color: #555;">Figura 5.15. Tendencias en Zona Noreste</div>
+      </div>
+
+    </div>
+
+    <!-- Bloque: Resumen comparativo (opcional) -->
+    <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; width: 100%; margin-top: 1rem;">
+
+      <!-- Noroeste -->
+      <div style="background: #eaf3ff; padding: 1rem; border-left: 4px solid #2563eb; border-radius: 6px; flex: 1 1 280px;">
+        <strong> Zona Noroeste</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>Sinaloa concentra más tópicos (109)</li>
+          <li>Picos: Servidores Públicos (2007, 2011, 2017)</li>
+          <li>Medio Ambiente crece hasta 2018</li>
+          <li>Educación y Seguridad con picos puntuales</li>
+        </ul>
+      </div>
+
+      <!-- Noreste -->
+      <div style="background: #fffbea; padding: 1rem; border-left: 4px solid #eab308; border-radius: 6px; flex: 1 1 280px;">
+        <strong> Zona Noreste</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>Nuevo León lidera (113 tópicos)</li>
+          <li>Pico en 2011 (Educación, Comercio)</li>
+          <li>Medio Ambiente al alza hasta 2020</li>
+          <li>Seguridad destaca entre 2016 y 2019</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="slide-footer"><span>15 / 22</span></div>
+</section>
+
+<section class="slide">
+  <div class="slide-header">
+    Resultados  Zonas Económicas Occidente y Oriente (2003–2020)
+  </div>
+
+  <div class="slide-content" style="padding: 1rem 3vw; font-size: 0.95rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+
+    <!-- Imágenes lado a lado -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; width: 100%;">
+
+      <!-- Imagen Occidente -->
+      <div style="flex: 1 1 42%; text-align: center; min-width: 280px;">
+        <img src="tendencia_categoria_zona_occidente.png" alt="Zona Occidente" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="margin-top: 0.3rem; color: #555;">Figura 5.16. Tendencias en Zona Occidente</div>
+      </div>
+
+      <!-- Imagen Oriente -->
+      <div style="flex: 1 1 42%; text-align: center; min-width: 280px;">
+        <img src="tendencia_categoria_zona_oriente.png" alt="Zona Oriente" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="margin-top: 0.3rem; color: #555;">Figura 5.17. Tendencias en Zona Oriente</div>
+      </div>
+    </div>
+
+    <!-- Comparativo resumido -->
+    <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; width: 100%; margin-top: 1rem;">
+
+      <!-- Occidente -->
+      <div style="background: #f0f9ff; padding: 1rem; border-left: 4px solid #0ea5e9; border-radius: 6px; flex: 1 1 280px;">
+        <strong> Zona Occidente</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>Jalisco lidera con 139 tópicos</li>
+          <li>Picos: 2009, 2014, 2015, 2017</li>
+          <li>Medio Ambiente constante (2011, 2014, 2017)</li>
+          <li>Educación y Comercial destacan en 2011 y 2017</li>
+        </ul>
+      </div>
+
+      <!-- Oriente -->
+      <div style="background: #fef9c3; padding: 1rem; border-left: 4px solid #facc15; border-radius: 6px; flex: 1 1 280px;">
+        <strong> Zona Oriente</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>Puebla y Veracruz concentran mayor número</li>
+          <li>Pico transversal en 2015</li>
+          <li>Finanzas Públicas crece en 2012, 2015, 2019</li>
+          <li>Necesidades Individuales constante</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="slide-footer"><span>16 / 22</span></div>
+</section>
+
+   
+<section class="slide">
+  <div class="slide-header">
+   Resultados  Zonas Centro-Norte y Centro-Sur (2003–2020)
+  </div>
+
+  <div class="slide-content" style="padding: 1rem 3vw; font-size: 0.95rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+
+    <!-- Imágenes comparativas -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; width: 100%;">
+
+      <!-- Imagen Centro-Norte -->
+      <div style="flex: 1 1 42%; text-align: center; min-width: 280px;">
+        <img src="tendencia_categoria_zona_centronorte.png" alt="Zona Centro-Norte" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="margin-top: 0.3rem; color: #555;">Figura 5.18. Tendencias en Zona Centro-Norte</div>
+      </div>
+
+      <!-- Imagen Centro-Sur -->
+      <div style="flex: 1 1 42%; text-align: center; min-width: 280px;">
+        <img src="tendencia_categoria_zona_centrosur.png" alt="Zona Centro-Sur" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="margin-top: 0.3rem; color: #555;">Figura 5.19. Tendencias en Zona Centro-Sur</div>
+      </div>
+
+    </div>
+
+    <!-- Resumen comparativo -->
+    <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; width: 100%; margin-top: 1rem;">
+
+      <!-- Centro-Norte -->
+      <div style="background: #f0f9ff; padding: 1rem; border-left: 4px solid #0ea5e9; border-radius: 6px; flex: 1 1 280px;">
+        <strong> Zona Centro-Norte</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>Guanajuato y SLP con más de 100 tópicos</li>
+          <li>Pico general en 2015 (Servicios, Seguridad, Salud)</li>
+          <li>Educación destaca en 2011 y 2014</li>
+          <li>Patrones irregulares en Comercial y Adquisiciones</li>
+        </ul>
+      </div>
+
+      <!-- Centro-Sur -->
+      <div style="background: #fef9c3; padding: 1rem; border-left: 4px solid #facc15; border-radius: 6px; flex: 1 1 280px;">
+        <strong> Zona Centro-Sur</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>CDMX domina con 788 tópicos</li>
+          <li>Pico en 2017 (Seguridad, Salud, Necesidades)</li>
+          <li>Seguridad crece desde 2010; Salud desde 2013</li>
+          <li>Medio Ambiente y Energía con baja frecuencia</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="slide-footer"><span>17 / 22</span></div>
+</section>
+
+<section class="slide">
+  <div class="slide-header">
+    Resultados  Zonas Económicas Suroeste y Sureste (2003–2020)
+  </div>
+
+  <div class="slide-content" style="padding: 1rem 3vw; font-size: 0.95rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+
+    <!-- Imágenes lado a lado -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; width: 100%;">
+
+      <!-- Imagen Suroeste -->
+      <div style="flex: 1 1 42%; text-align: center; min-width: 280px;">
+        <img src="tendencia_categoria_zona_suroeste.png" alt="Zona Suroeste" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="margin-top: 0.3rem; color: #555;">Figura 5.20. Tendencias en Zona Suroeste</div>
+      </div>
+
+      <!-- Imagen Sureste -->
+      <div style="flex: 1 1 42%; text-align: center; min-width: 280px;">
+        <img src="tendencia_categoria_zona_sureste.png" alt="Zona Sureste" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="margin-top: 0.3rem; color: #555;">Figura 5.21. Tendencias en Zona Sureste</div>
+      </div>
+
+    </div>
+
+    <!-- Resumen comparativo -->
+    <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; width: 100%; margin-top: 1rem;">
+
+      <!-- Suroeste -->
+      <div style="background: #f0f9ff; padding: 1rem; border-left: 4px solid #0ea5e9; border-radius: 6px; flex: 1 1 280px;">
+        <strong>Zona Suroeste</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>Chiapas lidera con 101 tópicos</li>
+          <li>Pico general en 2015</li>
+          <li>Servidores Públicos y Seguridad constantes</li>
+          <li>Medio Ambiente y Adquisiciones con menor presencia</li>
+        </ul>
+      </div>
+
+      <!-- Sureste -->
+      <div style="background: #fef9c3; padding: 1rem; border-left: 4px solid #facc15; border-radius: 6px; flex: 1 1 280px;">
+        <strong>Zona Sureste</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>Yucatán encabeza con 110 tópicos</li>
+          <li>Pico principal en 2018</li>
+          <li>Medio Ambiente constante (2010, 2015, 2018)</li>
+          <li>Caída en Servidores Públicos en 2019</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="slide-footer"><span>18 / 22</span></div>
+
+</section>
+
+<section class="slide bg-white min-h-screen flex flex-col justify-between px-8 py-6">
+
+  <!-- TÍTULO -->
+  <div class="slide-header text-3xl md:text-4xl font-bold text-center text-gray-900 pb-4 border-b border-gray-300">
+    Resultados del Análisis de Solicitudes en el Sector Ambiental (2003–2020)
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="flex flex-col md:flex-row justify-center items-center gap-8 grow mt-6">
+
+    <!-- IMAGEN AMPLIA -->
+    <div class="w-full md:w-3/5">
+      <img src="tendencia_categoria_medio_ambiente.png"
+           alt="Figura 5.26 - Tendencias ambientales"
+           class="w-full rounded-xl border border-gray-200 shadow" />
+      <p class="text-center text-sm text-gray-600 mt-2">
+        Figura 5.26. Tendencias de solicitudes ambientales clasificadas por tema (2003–2020)
+      </p>
+    </div>
+
+    <!-- HALLAZGOS -->
+    <div class="w-full md:w-2/5 bg-teal-50 border-l-4 border-teal-400 rounded-xl p-6 text-[17px] leading-relaxed text-gray-800 shadow-md">
+      <h3 class="font-semibold text-teal-900 text-lg mb-3">Hallazgos clave</h3>
+      <ul class="list-disc pl-5 space-y-2">
+        <li><strong>Pico de actividad:</strong> 2006–2009, impulsado por Gestión de Residuos y Legislación Ambiental.</li>
+        <li><strong>Estabilidad baja:</strong> de 2010 a 2020, con repuntes en 2018 y 2020.</li>
+        <li><strong>Gestión de Residuos:</strong> mantiene presencia constante durante todo el periodo.</li>
+        <li><strong>Legislación Ambiental:</strong> decayó tras 2009, pero muestra señales de recuperación.</li>
+        <li><strong>Educación y Participación:</strong> son irregulares; se recomienda reforzar su continuidad institucional.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="slide-footer text-right text-base text-gray-600 font-medium mt-6">
+    <span>19 / 22</span>
+  </footer>
+</section>
+
+
+
+<section class="slide">
+  <div class="slide-header">
+   Resultados  Clasificación Automática de Tópicos — Modelos GPT, LLaMA y BETO
+  </div>
+
+  <div class="slide-content" style="padding: 1.2rem 3vw; font-size: 0.95rem; display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+
+    <!-- Imágenes lado a lado -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; width: 100%;">
+
+      <!-- GPT -->
+      <div style="flex: 1 1 30%; text-align: center; min-width: 280px;">
+        <img src="resultados_clasificador_gpt3_5.png" alt="Matriz GPT" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="font-size: 0.85rem; color: #555;">Figura 5.23. GPT — Zero-Shot Prompting</div>
+      </div>
+
+      <!-- LLaMA -->
+      <div style="flex: 1 1 30%; text-align: center; min-width: 280px;">
+        <img src="resultados_clasificador_llama.png" alt="Matriz LLaMA" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="font-size: 0.85rem; color: #555;">Figura 5.24. LLaMA — Zero-Shot Prompting</div>
+      </div>
+
+      <!-- BETO -->
+      <div style="flex: 1 1 30%; text-align: center; min-width: 280px;">
+        <img src="resultados_clasificador_BETO.png" alt="Matriz BETO" style="width: 100%; max-width: 100%; border-radius: 6px; border: 1px solid #ccc;" />
+        <div style="font-size: 0.85rem; color: #555;">Figura 5.25. BETO — Modelo entrenado en español</div>
+      </div>
+
+    </div>
+
+    <!-- Cuadro comparativo de resultados -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.2rem; width: 100%; margin-top: 1rem; font-size: 0.92rem;">
+
+      <!-- GPT -->
+      <div style="background: #f0f9ff; padding: 1rem; border-left: 4px solid #0ea5e9; border-radius: 6px;">
+        <strong>GPT</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>Mejor desempeño en <strong>Servidores Públicos</strong> (764 aciertos)</li>
+          <li>Buen F1 en Medio Ambiente y Finanzas</li>
+          <li>Errores en Energía y Salud</li>
+          <li>Zero-Shot sin entrenamiento específico</li>
+        </ul>
+      </div>
+
+      <!-- LLaMA -->
+      <div style="background: #fefce8; padding: 1rem; border-left: 4px solid #eab308; border-radius: 6px;">
+        <strong> LLaMA</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>Mejor precisión en <strong>Adquisiciones</strong> (310)</li>
+          <li>Buen balance Medio Ambiente y Comercial</li>
+          <li>Confusiones frecuentes con Finanzas y Salud</li>
+          <li>Zero-Shot con rendimiento mixto</li>
+        </ul>
+      </div>
+
+      <!-- BETO -->
+      <div style="background: #f0fdf4; padding: 1rem; border-left: 4px solid #10b981; border-radius: 6px;">
+        <strong> BETO</strong>
+        <ul style="margin: 0.5rem 0 0 1.2rem;">
+          <li>Modelo en español, alto recall en Medio Ambiente (429)</li>
+          <li>Buen equilibrio F1 en Educación y Seguridad</li>
+          <li>Errores dispersos en Salud y Comercial</li>
+          <li>Requiere mejora en clases pequeñas</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="slide-footer"><span>20 / 22</span></div>
+</section>
+
+
+
+
+<section class="slide">
+  <div class="slide-header">
+    Discusión y Conclusiones Generales
+  </div>
+  <div class="slide-content" style="font-size: 1rem; line-height: 1.5; margin-top: 1rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+
+      <div style="background:#f1f5f9; padding:1rem; border-radius:8px; border-left:4px solid #2563eb;">
+        <strong> Derecho de acceso y transparencia</strong>
+        <p>La información pública es clave para la rendición de cuentas. Tras la <strong>desaparición del INAI</strong>, el nuevo órgano <strong>Transparencia para el Pueblo</strong> de la Secretaría Anticorrupción y Buen Gobierno debe garantizar el monitoreo independiente del derecho de acceso.</p>
+      </div>
+
+      <div style="background:#f1f5f9; padding:1rem; border-radius:8px; border-left:4px solid #f97316;">
+        <strong> Retos y contexto actual</strong>
+        <p>El incremento de solicitudes en la PNT y el proceso de transición institucional generan desafíos para priorizar y analizar temas de interés público de manera eficiente.</p>
+      </div>
+
+      <div style="background:#f1f5f9; padding:1rem; border-radius:8px; border-left:4px solid #0d9488;">
+        <strong> Metodología innovadora</strong>
+        <p>La combinación de <em>Ley de Zipf</em>, algoritmos genéticos y LLMs (GPT, LLaMA, BETO) permitió optimizar LDA, mejorar la coherencia y automatizar títulos y descripciones de tópicos.</p>
+      </div>
+
+      <div style="background:#f1f5f9; padding:1rem; border-radius:8px; border-left:4px solid #7c3aed;">
+        <strong> Escalabilidad</strong>
+        <p>Se procesaron más de <strong>2.5M de solicitudes</strong>, demostrando que la metodología es adaptable a cualquier dataset masivo y a nuevos periodos.</p>
+      </div>
+
+      <div style="background:#f1f5f9; padding:1rem; border-radius:8px; border-left:4px solid #dc2626;">
+        <strong> Patrones detectados</strong>
+        <p>CDMX, Edomex y Jalisco concentran la mayor demanda; <em>servidores públicos</em> es el tema principal, seguido de medio ambiente y seguridad.</p>
+      </div>
+
+      <div style="background:#f1f5f9; padding:1rem; border-radius:8px; border-left:4px solid #16a34a;">
+        <strong> Sector ambiental</strong>
+        <p>Se identificaron 115 tópicos clave, con interés ciudadano sensible a eventos críticos (2006–2009 y 2018–2020).</p>
+      </div>
+
+      <div style="background:#f1f5f9; padding:1rem; border-radius:8px; border-left:4px solid #0891b2;">
+        <strong> Transparencia proactiva</strong>
+        <p>Permite detectar vacíos informativos y orientar la publicación de datos útiles para la sociedad en los 32 estados.</p>
+      </div>
+
+      <div style="background:#f1f5f9; padding:1rem; border-radius:8px; border-left:4px solid #15803d;">
+        <strong> Impacto y aplicaciones</strong>
+        <p>Facilita el trabajo de periodistas, OSC, autoridades y ciudadanía para analizar grandes volúmenes de datos y anticipar demandas sociales.</p>
+      </div>
+
+      <div style="background:#f1f5f9; padding:1rem; border-radius:8px; grid-column: span 2; text-align:center; border-left:4px solid #3b82f6;">
+        <strong> Recomendaciones</strong>
+        <p>Actualizar periódicamente los modelos, integrar dashboards interactivos y aplicar la metodología a otros contextos temáticos y geográficos.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>21 / 22</span></div>
+</section>
+
+
+<section class="slide">
+  <!-- Encabezado -->
+  <div class="slide-header text-4xl font-bold text-center text-gray-900 py-6 border-b border-gray-200">
+    Producción y Difusión Académica
+  </div>
+
+  <!-- Contenido -->
+  <div class="slide-content flex justify-center items-center px-6 md:px-12 py-10 h-[82vh]">
+    <div class="w-full max-w-[1500px] grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+
+      <!-- Artículo en revisión (JCR) -->
+      <figure class="bg-white border border-gray-200 rounded-3xl shadow-lg p-5 h-[560px] flex flex-col">
+        <div class="w-full h-[420px] bg-gray-50 rounded-2xl overflow-hidden flex items-center justify-center">
+          <img src="revista.jpeg" alt="Revisión por pares: Environmental and Ecological Statistics"
+               class="w-full h-full object-contain">
+        </div>
+        <figcaption class="mt-4 text-center">
+          <div class="flex items-center justify-center gap-3 mb-2">
+            <span class="px-3 py-1 text-sm md:text-base font-semibold rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200">JCR</span>
+            <span class="px-3 py-1 text-sm md:text-base font-semibold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Peer review</span>
+            <span class="px-3 py-1 text-sm md:text-base font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">2025</span>
+          </div>
+          <p class="text-base md:text-lg text-gray-900 font-medium leading-snug">
+            <em>Environmental and Ecological Statistics</em><br>
+            Revised submission: en revisión por pares.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- Capítulo de libro (Springer) -->
+      <figure class="bg-white border border-gray-200 rounded-3xl shadow-lg p-5 h-[560px] flex flex-col">
+        <div class="w-full h-[420px] bg-gray-50 rounded-2xl overflow-hidden flex items-center justify-center">
+          <img src="capitulodelibro.png" alt="Capítulo Springer: Automation of Topic Generation"
+               class="w-full h-full object-contain">
+        </div>
+        <figcaption class="mt-4 text-center">
+          <div class="flex items-center justify-center gap-3 mb-2">
+            <span class="px-3 py-1 text-sm md:text-base font-semibold rounded-full bg-purple-100 text-purple-800 border border-purple-200">Capítulo Libro</span>
+            <span class="px-3 py-1 text-sm md:text-base font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">Springer</span>
+            <span class="px-3 py-1 text-sm md:text-base font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">2024</span>
+          </div>
+          <p class="text-base md:text-lg text-gray-900 font-medium leading-snug">
+            <em>Automation of Topic Generation in Government Information Requests in Mexico</em>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- Congreso / Proceedings -->
+      <figure class="bg-white border border-gray-200 rounded-3xl shadow-lg p-5 h-[560px] flex flex-col">
+        <div class="w-full h-[420px] bg-gray-50 rounded-2xl overflow-hidden flex items-center justify-center">
+          <img src="congreso.png" alt="Proceedings / Congreso: WSDM'24"
+               class="w-full h-full object-contain">
+        </div>
+        <figcaption class="mt-4 text-center">
+          <div class="flex items-center justify-center gap-3 mb-2">
+            <span class="px-3 py-1 text-sm md:text-base font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-200">Congreso</span>
+            <span class="px-3 py-1 text-sm md:text-base font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">ACM</span>
+            <span class="px-3 py-1 text-sm md:text-base font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">2024</span>
+          </div>
+          <p class="text-base md:text-lg text-gray-900 font-medium leading-snug">
+            <em>WSDM ’24 Proceedings</em>: Automated Topic Generation for the Mexican Platform for Access to Public Information (2003–2020).
+          </p>
+        </figcaption>
+      </figure>
+
+    </div>
+  </div>
+
+  <!-- Pie -->
+  <div class="slide-footer text-right px-12 py-5 text-base md:text-lg text-black-500 font-semibold">
+   22 / 22
+  </div>
+</section>
+
+
+
+
+
+
+<section class="slide bg-gradient-to-b from-white via-gray-50 to-gray-100">
+  <!-- Encabezado -->
+  <div class="slide-header text-4xl font-extrabold text-center text-gray-900 py-8 border-b border-gray-200">
+    Agradecimientos y Preguntas
+  </div>
+
+  <!-- Contenido -->
+  <div class="slide-content flex flex-col items-center justify-center text-center px-8 py-10 h-[80vh] space-y-12">
+    
+    <!-- Mensaje de agradecimiento -->
+    <div class="max-w-5xl">
+      <p class="text-4xl font-extrabold text-gray-800">
+        ¡Gracias por su atención!
+      </p>
+      <p class="mt-6 text-2xl text-gray-700 leading-relaxed">
+        Gracias a <strong class="text-gray-900">CentroGeo</strong>, 
+        <strong class="text-gray-900">Secihti</strong> 
+        y a todas las personas e instituciones que apoyaron este trabajo y contribuyeron a que fuera posible.
+      </p>
+    </div>
+
+    <!-- Imagen decorativa -->
+    <div class="w-56 h-56">
+      <img src="centrogeoo.png" alt="Agradecimiento" class="w-full h-full object-contain drop-shadow-lg">
+    </div>
+
+    <!-- Sección de preguntas -->
+    <div class="mt-6">
+      <p class="text-3xl font-semibold text-gray-900">
+        ¿Preguntas o comentarios?
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Pie -->
+  <div class="slide-footer text-right px-8 py-4 text-base text-gray-500 font-semibold">
+   23
+  </div>
+</section>
+
+
+
+
+<section class="slide">
+  <!-- Encabezado -->
+  <div class="slide-header text-4xl font-bold text-center text-gray-900 py-6 border-b border-gray-200">
+    Anexo: Cálculo de coherencia \(C_V\) para evaluar LDA
+  </div>
+
+  <!-- Contenido -->
+  <div class="slide-content flex justify-center items-center px-8 py-10 h-[80vh]">
+    <div class="w-full max-w-4xl text-gray-900 space-y-6">
+
+      <!-- Introducción -->
+      <p class="text-lg text-center">
+        En <strong>LDA</strong>, la coherencia \(C_V\) mide si las <strong>palabras de cada tópico</strong> tienen sentido juntas.  
+        Sirve para comparar modelos y elegir el que produce tópicos más claros y comprensibles.
+      </p>
+
+      <!-- Pasos simplificados -->
+      <div class="space-y-3">
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <p class="font-semibold">1. Tomar las palabras más representativas de cada tópico generado por LDA.</p>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <p class="font-semibold">2. Medir cuántas veces <em>cada par</em> de palabras aparece junto en el corpus (ventana deslizante).</p>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <p class="font-semibold">3. Calcular la relación con NPMI:</p>
+          <p class="mt-2 text-sm">
+            \[
+              \text{NPMI}(w', w^*) =
+              \frac{\log\left(\frac{P(w', w^*)}{P(w')P(w^*)}\right)}
+                   {-\log\left(P(w', w^*)\right)}
+            \]
+          </p>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <p class="font-semibold">4. Promediar los valores NPMI de todos los pares de palabras para obtener \(C_V\) del tópico.</p>
+        </div>
+      </div>
+
+      <!-- Ejemplo aplicado -->
+      <div class="bg-white border border-gray-300 rounded-xl p-6 text-center shadow-lg">
+        <p class="text-xl font-bold mb-2">Ejemplo</p>
+        <p class="text-lg leading-relaxed">
+          Tópico LDA: <strong><em>presupuesto</em></strong>, <strong><em>educación</em></strong>, <strong><em>estatal</em></strong>  
+          → NPMI promedio = <strong>0.84</strong>  
+          → <span class="text-green-600 font-bold">Alta coherencia</span>
+        </p>
+      </div>
+
+      <!-- Nota -->
+      <p class="text-xs text-gray-500 text-center">
+        En la evaluación de LDA, un \(C_V\) más alto indica tópicos con mayor consistencia semántica y más útiles para interpretación.
+      </p>
+    </div>
+  </div>
+
+  <!-- Pie -->
+  <div class="slide-footer text-right px-8 py-4 text-sm text-gray-500 font-semibold">
+    Anexo/ 1
+  </div>
+</section>
+
+
+
+
+  </div>
+
+  <div id="controls" style="position: absolute; bottom: 40px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; z-index: 50; pointer-events: none;">
+    <button id="prevBtn" style="pointer-events: all; background: white; color: black; padding: 10px 16px; border-radius: 50%; font-size: 24px; box-shadow: 0 0 8px rgba(0,0,0,0.3); border: none; cursor: pointer;">&larr;</button>
+    <button id="nextBtn" style="pointer-events: all; background: white; color: black; padding: 10px 16px; border-radius: 50%; font-size: 24px; box-shadow: 0 0 8px rgba(0,0,0,0.3); border: none; cursor: pointer;">&rarr;</button>
+  </div>
+
+  <script>
+    const slides = document.getElementById('slides');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let index = 0;
+    const totalSlides = slides.children.length;
+    function updateSlide() {
+      slides.style.transform = `translateX(-${index * 100}vw)`;
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') index = Math.min(index + 1, totalSlides - 1);
+      if (e.key === 'ArrowLeft') index = Math.max(index - 1, 0);
+      updateSlide();
+    });
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (index > 0) index--;
+      updateSlide();
+    });
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (index < totalSlides - 1) index++;
+      updateSlide();
+    });
+    function toggleFullscreen() {
+      const elem = document.documentElement;
+      if (!document.fullscreenElement) elem.requestFullscreen().catch(err => alert(`Error: ${err.message}`));
+      else document.exitFullscreen();
+    }
+    document.addEventListener('fullscreenchange', () => {
+      fullscreenBtn.style.display = document.fullscreenElement ? 'none' : 'block';
+    });
+    updateSlide();
+  </script>
+</body>
+</html>

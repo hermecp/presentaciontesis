@@ -3,12 +3,12 @@ function getRandomParam(min, max, decimals = 2) {
 }
 
 const defaultSteps = [
-  { title: "1. Inicialización", desc: "Combinaciones aleatorias:", data: [], color: "purple" },
-  { title: "2. Evaluación", desc: "Cálculo de coherencia:", data: [], color: "blue" },
-  { title: "3. Selección", desc: "Individuos con mejor puntuación.", data: [], color: "green" },
-  { title: "4. Cruce", desc: "Se generan nuevos hijos.", data: [], color: "yellow" },
-  { title: "5. Mutación", desc: "Variación aleatoria de genes.", data: [], color: "red" },
-  { title: "6. Iteración", desc: "Proceso repetido por múltiples generaciones.", data: [], color: "indigo" }
+  { title: "1. Inicialización", desc: "<strong>Combinaciones aleatorias:</strong>", data: [], color: "purple" },
+  { title: "2. Evaluación", desc: "<strong>Cálculo de coherencia:</strong>", data: [], color: "blue" },
+  { title: "3. Selección", desc: "<strong>Individuos con mejor puntuación.</strong>", data: [], color: "green" },
+  { title: "4. Cruce", desc: "<strong>Se generan nuevos hijos.</strong>", data: [], color: "yellow" },
+  { title: "5. Mutación", desc: "<strong>Variación aleatoria de genes.</strong>", data: [], color: "red" },
+  { title: "6. Iteración", desc: "<strong>Proceso repetido por múltiples generaciones.</strong>", data: [], color: "indigo" }
 ];
 
 function renderSteps(steps) {
@@ -27,9 +27,16 @@ function renderSteps(steps) {
 
 async function runGeneticSimulation() {
   const generations = parseInt(document.getElementById('genSlider').value);
-  const finalResult = document.getElementById('finalResult');
-  document.getElementById('chart').innerHTML = '';
+  const finalResult = document.getElementById('finalResultGenetico');
+
+  // Reinicia solo el gráfico, no borra el DOM
+  Plotly.purge('chart');
   finalResult.classList.add('hidden');
+
+  let bestAlpha = null;
+  let bestBeta = null;
+  let bestK = null;
+  let bestCoh = 0;
 
   const traceBefore20 = {
     x: [], y: [],
@@ -63,6 +70,17 @@ async function runGeneticSimulation() {
     else if (i < 10) y = 0.64;
     else if (i < 18) y = 0.655;
     else y = 0.666;
+
+    const alpha = getRandomParam(0.2, 0.4);
+    const beta = getRandomParam(0.03, 0.07);
+    const k = Math.floor(Math.random() * 10 + 15);
+
+    if (y > bestCoh) {
+      bestCoh = y;
+      bestAlpha = alpha;
+      bestBeta = beta;
+      bestK = k;
+    }
 
     if (i < 20) {
       traceBefore20.x.push(i + 1);
@@ -98,39 +116,59 @@ async function runGeneticSimulation() {
     }
 
     defaultSteps[0].data = [
-      `A: α=${getRandomParam(0.1, 0.9)}, β=${getRandomParam(0.01, 0.1)}, k=${Math.floor(Math.random() * 15 + 10)}`,
-      `B: α=${getRandomParam(0.1, 0.9)}, β=${getRandomParam(0.01, 0.1)}, k=${Math.floor(Math.random() * 15 + 10)}`
+      `<span style="font-size: larger"><strong>A:</strong> α=${getRandomParam(0.1, 0.9)}, β=${getRandomParam(0.01, 0.1)}, k=${Math.floor(Math.random() * 15 + 10)}</span>`,
+      `<span style="font-size: larger"><strong>B:</strong> α=${getRandomParam(0.1, 0.9)}, β=${getRandomParam(0.01, 0.1)}, k=${Math.floor(Math.random() * 15 + 10)}</span>`
     ];
-    defaultSteps[1].data = [`Generación ${i + 1}: Coherencia = ${y}`];
-    defaultSteps[2].data = [`Individuos seleccionados: ${Math.random() > 0.5 ? "A y B" : "B y C"}`];
+    defaultSteps[1].data = [
+      `<span style="font-size: larger"><strong>Generación ${i + 1}:</strong> Coherencia = ${y}</span>`
+    ];
+    defaultSteps[2].data = [
+      `<span style="font-size: larger"><strong>Individuos seleccionados:</strong> ${Math.random() > 0.5 ? "A y B" : "B y C"}</span>`
+    ];
     defaultSteps[3].data = [
-      `Hijo1 α=${getRandomParam(0.2, 0.5)}, β=${getRandomParam(0.03, 0.07)}, k=${Math.floor(Math.random() * 10 + 15)}`
+      `<span style="font-size: larger"><strong>Hijo1:</strong> α=${getRandomParam(0.2, 0.5)}, β=${getRandomParam(0.03, 0.07)}, k=${Math.floor(Math.random() * 10 + 15)}</span>`
     ];
-    defaultSteps[4].data = [`Mutación: k=${Math.floor(Math.random() * 5 + 18)} → ${Math.floor(Math.random() * 5 + 18)}`];
-    defaultSteps[5].data = [`Iteración ${i + 1} completada.`];
+    defaultSteps[4].data = [
+      `<span style="font-size: larger"><strong>Mutación:</strong> k=${Math.floor(Math.random() * 5 + 18)} → ${Math.floor(Math.random() * 5 + 18)}</span>`
+    ];
+    defaultSteps[5].data = [
+      `<span style="font-size: larger"><strong>Iteración ${i + 1} completada.</strong></span>`
+    ];
 
     renderSteps(defaultSteps);
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
-  const finalAlpha = getRandomParam(0.2, 0.4);
-  const finalBeta = getRandomParam(0.03, 0.07);
-  const finalK = Math.floor(Math.random() * 5 + 18);
-  const finalCoh = getRandomParam(0.85, 0.95, 3);
+  // Espera breve antes de mostrar el resultado
+  await new Promise(resolve => setTimeout(resolve, 400));
 
   finalResult.classList.remove('hidden');
+  finalResult.classList.add('md:w-[400px]', 'w-full');
   finalResult.innerHTML = `
-    <h3 class="font-semibold text-green-900 mb-2">✅ Resultado Final</h3>
-    <p>α = <code>${finalAlpha}</code>, β = <code>${finalBeta}</code>, k = <code>${finalK}</code>, Coherencia = <code>${finalCoh}</code></p>
-    <p class="mt-2 text-sm italic text-gray-700">(Modelo final LDA optimizado)</p>`;
+    <div class="text-sm text-gray-800 animate-fade-in">
+      <h3 class="text-base font-semibold text-black-800 mb-1">✅ Resultado Final</h3>
+      <p>
+        α = <code class="text-black-700 font-bold">${bestAlpha}</code><br>
+        β = <code class="text-black-700 font-bold">${bestBeta}</code><br>
+        k = <code class="text-black-700 font-bold">${bestK}</code><br>
+        Coherencia = <code class="text-black-700 font-bold">${bestCoh}</code>
+      </p>
+      <p class="mt-1 text-xs italic text-black-600">(Modelo final LDA optimizado)</p>
+    </div>
+  `;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM cargado. Simulación lista.");
   renderSteps(defaultSteps);
 
   const btn = document.getElementById("runBtn");
-  if (btn) {
-    btn.addEventListener("click", runGeneticSimulation);
+  const slider = document.getElementById("genSlider");
+  const valueDisplay = document.getElementById("genValue");
+
+  if (btn) btn.addEventListener("click", runGeneticSimulation);
+  if (slider && valueDisplay) {
+    slider.addEventListener("input", () => {
+      valueDisplay.textContent = slider.value;
+    });
   }
 });

@@ -1,15 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("✅ DOM cargado. Simulación lista.");
-
   const N = 10;
   const L = 12;
   const GENS = 3;
   let generation = 1;
-  let population = [];  
+  let population = [];
   let bestIndividual = null;
   let history = [];
-
-  // === FUNCIONES BASE ===
+  let currentPhase = '';
 
   function randomGenotype() {
     return Array.from({ length: L }, () => Math.random() < 0.5 ? '0' : '1');
@@ -38,17 +35,33 @@ document.addEventListener("DOMContentLoaded", function () {
     return 'bg-red-300';
   }
 
-  // === ACTUALIZAR VISUALIZACIÓN ===
-
-  function renderPopulation(containerId, data) {
+  function renderPopulation(containerId, data, options = {}) {
     const container = document.getElementById(containerId);
     container.innerHTML = "";
-    data.forEach((genotype) => {
+
+    data.forEach((genotype, i) => {
       const score = fitness(genotype);
       const color = getColor(score);
       const div = document.createElement("div");
       div.className = `font-mono text-xs px-2 py-1 rounded ${color} text-black text-center shadow`;
-      div.textContent = genotype.join('');
+      const bitString = genotype.join('');
+      let subtitle = "";
+
+      if (options.phase === 'cruce' && options.parents) {
+        subtitle = `<br><span class="text-[10px] text-gray-700">P${options.parents[i]}</span>`;
+      }
+
+      if (options.phase === 'mutacion' && options.mutatedBit && options.mutatedBit[i] !== undefined) {
+        const pos = options.mutatedBit[i];
+        let gCopy = [...genotype];
+        gCopy[pos] = `<span class="text-red-600 font-bold">${gCopy[pos]}</span>`;
+        div.innerHTML = `${gCopy.join('')}${subtitle}`;
+        div.title = `Bit mutado en posición ${pos}`;
+      } else {
+        div.innerHTML = `${bitString}${subtitle}`;
+        div.title = `Fitness: ${score}`;
+      }
+
       container.appendChild(div);
     });
   }
@@ -75,77 +88,68 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // === COLORES DE FASES ===
-
   function showExplanation(text, phase = "") {
     const e = document.getElementById('explanation');
-    e.classList.remove(
-      'bg-blue-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500',
-      'bg-green-500', 'bg-gray-100', 'text-gray-800', 'text-white', 'text-black'
-    );
+    e.className = 'text-[18px] text-center font-semibold rounded shadow p-3 transition-colors duration-500 ease-in-out';
 
-    let color = 'bg-gray-100 text-gray-800';
-    switch (phase) {
-      case 'inicio': color = 'bg-blue-500 text-white'; break;
-      case 'seleccion': color = 'bg-yellow-500 text-black'; break;
-      case 'cruce': color = 'bg-purple-500 text-white'; break;
-      case 'mutacion': color = 'bg-pink-500 text-black'; break;
-      case 'fin': color = 'bg-green-500 text-white'; break;
-    }
+    const colors = {
+      inicio: 'bg-blue-500 text-black',
+      evaluacion: 'bg-indigo-500 text-black',
+      seleccion: 'bg-yellow-500 text-black',
+      cruce: 'bg-purple-500 text-black',
+      mutacion: 'bg-pink-500 text-black',
+      fin: 'bg-green-500 text-black',
+      default: 'bg-gray-100 text-gray-800'
+    };
 
-    color.split(' ').forEach(c => e.classList.add(c));
+    const color = colors[phase] || colors.default;
+    e.classList.add(...color.split(' '));
     e.textContent = text;
   }
 
   function updateContainerColor(phase) {
-    const popInit = document.getElementById('popInit');
-    const popNew = document.getElementById('popNew');
-    const all = [popInit, popNew];
-
-    const phaseColors = {
+    const colors = {
       inicio: 'bg-blue-100',
+      evaluacion: 'bg-indigo-100',
       seleccion: 'bg-yellow-100',
       cruce: 'bg-purple-100',
       mutacion: 'bg-pink-100',
-      fin: 'bg-green-100',
-      default: 'bg-white'
+      fin: 'bg-green-100'
     };
-
-    const color = phaseColors[phase] || phaseColors.default;
-
+    const popInit = document.getElementById('popInit');
+    const popNew = document.getElementById('popNew');
+    const all = [popInit, popNew];
+    const color = colors[phase] || 'bg-white';
     all.forEach(el => {
-      el.classList.remove(
-        'bg-blue-100', 'bg-yellow-100', 'bg-purple-100', 'bg-pink-100', 'bg-green-100', 'bg-white'
-      );
+      el.className = el.className.replace(/bg-\w+-100/g, '').trim();
       el.classList.add(color);
     });
   }
 
   function highlightConcept(phase) {
     const conceptMap = {
-      inicio: null,
+      inicio: 'concept-genotipo',
+      evaluacion: 'concept-aptitud',
       seleccion: 'concept-seleccion',
       cruce: 'concept-cruce',
       mutacion: 'concept-mutacion',
       fin: 'concept-elitismo'
     };
-
     const highlightColor = {
       seleccion: 'bg-yellow-100',
       cruce: 'bg-purple-100',
       mutacion: 'bg-pink-100',
+      evaluacion: 'bg-indigo-100',
+      inicio: 'bg-blue-100',
       fin: 'bg-green-100'
     };
 
-    const items = document.querySelectorAll('#conceptList li');
-    items.forEach(item => {
-      item.classList.remove('bg-yellow-100', 'bg-purple-100', 'bg-pink-100', 'bg-green-100');
+    document.querySelectorAll('#conceptList li').forEach(item => {
+      item.classList.remove('bg-yellow-100', 'bg-purple-100', 'bg-pink-100', 'bg-green-100', 'bg-indigo-100', 'bg-blue-100');
     });
 
-    const conceptId = conceptMap[phase];
-    if (!conceptId) return;
-    const item = document.getElementById(conceptId);
-    if (item) item.classList.add(highlightColor[phase]);
+    const id = conceptMap[phase];
+    if (id) document.getElementById(id)?.classList.add(highlightColor[phase]);
   }
 
   function showBest(individual) {
@@ -159,63 +163,72 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
   }
 
-  async function wait(ms = 1800) {
+  async function wait(ms = 2000) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // === SIMULACIÓN ===
-
   async function runOneGeneration() {
-    showExplanation(`📘 Generación ${generation}: creando población...`, 'inicio');
+    showExplanation(`📘 Generación ${generation}: creando población inicial.`, 'inicio');
     updateContainerColor('inicio');
     highlightConcept('inicio');
     if (generation === 1) population = Array.from({ length: N }, randomGenotype);
     renderPopulation('popInit', population);
+    await wait();
+
+    showExplanation("📊 Evaluación: se calcula la aptitud de cada individuo.", 'evaluacion');
+    updateContainerColor('evaluacion');
+    highlightConcept('evaluacion');
     updateTable(population);
     await wait();
 
-    showExplanation("✅ Selección de los mejores individuos.", 'seleccion');
+    showExplanation("✅ Selección: se eligen los mejores individuos.", 'seleccion');
     updateContainerColor('seleccion');
     highlightConcept('seleccion');
     const selected = population.sort((a, b) => fitness(b) - fitness(a)).slice(0, N / 2);
     await wait();
 
-    showExplanation("🔀 Cruzamiento de pares.", 'cruce');
+    showExplanation("🔀 Cruce: se combinan padres para generar hijos.", 'cruce');
     updateContainerColor('cruce');
     highlightConcept('cruce');
     const offspring = [];
+    const parentRefs = [];
     for (let i = 0; i < selected.length - 1; i += 2) {
       const p1 = selected[i];
       const p2 = selected[i + 1];
       const point = Math.floor(L / 2);
       offspring.push([...p1.slice(0, point), ...p2.slice(point)]);
       offspring.push([...p2.slice(0, point), ...p1.slice(point)]);
+      parentRefs.push(i + 1, i + 2);
     }
-    renderPopulation('popNew', offspring);
+    renderPopulation('popNew', offspring, { phase: 'cruce', parents: parentRefs });
     await wait();
 
-    showExplanation("⚡ Aplicando mutación.", 'mutacion');
+    showExplanation("⚡ Mutación: se altera aleatoriamente un bit.", 'mutacion');
     updateContainerColor('mutacion');
     highlightConcept('mutacion');
-    const mutated = offspring.map(g => {
+    const mutated = offspring.map((g, i) => {
       const copy = [...g];
-      if (Math.random() < 0.5) {
+      const shouldMutate = Math.random() < 0.5;
+      if (shouldMutate) {
         const pos = Math.floor(Math.random() * L);
         copy[pos] = copy[pos] === '1' ? '0' : '1';
+        return { genotype: copy, mutated: pos };
       }
-      return copy;
+      return { genotype: copy };
     });
-    renderPopulation('popNew', mutated);
+    const mutatedGenotypes = mutated.map(m => m.genotype);
+    const mutatedBits = mutated.map(m => m.mutated ?? null);
+    renderPopulation('popNew', mutatedGenotypes, { phase: 'mutacion', mutatedBit: mutatedBits });
     await wait();
 
-    const all = [...population, ...mutated];
+    const all = [...population, ...mutatedGenotypes];
     const best = all.reduce((a, b) => fitness(a) > fitness(b) ? a : b);
     if (!bestIndividual || fitness(best) > fitness(bestIndividual)) {
       bestIndividual = [...best];
       showBest(bestIndividual);
     }
 
-    population = [...selected, ...mutated];
+    population = [...selected, ...mutatedGenotypes];
     updateTable(population);
     generation++;
   }
@@ -226,8 +239,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateContainerColor('fin');
     highlightConcept('fin');
   }
-
-  // === REINICIO ===
 
   function resetSimulation() {
     generation = 1;
@@ -243,25 +254,15 @@ document.addEventListener("DOMContentLoaded", function () {
     updateContainerColor('');
     highlightConcept('');
 
-    const startBtn = document.getElementById('startBtn');
-    if (startBtn) startBtn.disabled = false;
+    document.getElementById('startBtn').disabled = false;
   }
 
-  // === BOTONES ===
+  document.getElementById('startBtn').addEventListener('click', () => {
+    document.getElementById('startBtn').disabled = true;
+    runSimulation();
+  });
 
-  const startBtn = document.getElementById('startBtn');
-  const resetBtn = document.getElementById('resetBtn');
-
-  if (startBtn) {
-    startBtn.addEventListener('click', () => {
-      startBtn.disabled = true;
-      runSimulation();
-    });
-  }
-
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      resetSimulation();
-    });
-  }
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    resetSimulation();
+  });
 });
